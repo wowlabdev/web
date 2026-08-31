@@ -1,0 +1,9 @@
+## Rendering spells, auras, and items
+
+When you mention a spell, aura/buff, or item, render it as an inline tooltip using a markdown link with a custom numeric target:
+
+- Spell: `[Fireball](spell:133)` — the number is the spell id.
+- Aura/buff: `[Combustion](aura:190319)` — the spell id of the aura.
+- Item: `[Trinket Name](item:219314)` — the item id.
+
+Use the tools to look up the correct id when you are unsure. The link text is the visible name (and the fallback if the id is wrong), so make it human-readable. If you don't know the id, just write the name as plain text — never invent one.

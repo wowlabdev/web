@@ -1,0 +1,118 @@
+packages:
+  - apps/*
+  - packages/*
+  - supabase
+
+catalogMode: strict
+
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  esbuild: true
+  protobufjs: false
+  sharp: true
+  unrs-resolver: true
+  workerd: true
+
+patchesDir: .pnpm-patches
+patchedDependencies:
+  rxdb@17.5.0: .pnpm-patches/rxdb@17.5.0.patch
+
+overrides:
+  "@babel/core@7.29.0": 7.29.7
+  "esbuild@0.28.0": 0.28.1
+  next: 16.3.3
+  postcss: 8.5.26
+  sharp: 0.35.4
+  webpack-dev-server: 5.2.6
+  ws: 8.21.3
+  zod-to-ts: 2.1.0
+
+catalog:
+  "@marsidev/react-turnstile": "^1.5.3"
+  "@noble/hashes": "^2.4.0"
+  "@opennextjs/cloudflare": "1.20.4"
+  "@paddle/paddle-js": "^1.6.4"
+  "@react-email/ui": "6.9.3"
+  "@shikijs/transformers": "^4.0.2"
+  "@stepperize/react": "^7.0.0"
+  "@supabase/ssr": "^0.12.0"
+  "@supabase/supabase-js": "^2.108.1"
+  "@tailwindcss/postcss": "^4.2.4"
+  "@tailwindcss/typography": "^0.5.19"
+  "@tanstack/react-form": "^1.33.0"
+  "@types/fs-extra": ^11.0.4
+  "@types/hast": "^3.0.4"
+  "@types/mdx": "^2.0.14"
+  "@types/node": "^26.4.0"
+  "@types/react": "^19.2.14"
+  "@types/react-dom": "^19.2.3"
+  "@wowlab/eslint-config": "^0.1.3"
+  "@wowlab/markupwright": "^0.1.3"
+  ahooks: "^3.9.7"
+  ai: "^7.0.85"
+  babel-plugin-react-compiler: "^1.0.0"
+  change-case: "^5.4.4"
+  commander: "^15.0.0"
+  dotenv: "^17.4.2"
+  class-variance-authority: "^0.7.1"
+  clsx: "^2.1.1"
+  cmdk: "^1.1.1"
+  date-fns: "^4.1.0"
+  dotenv-cli: "^11.0.0"
+  embla-carousel-react: "^8.6.0"
+  entities: "^8.0.0"
+  eslint: "^10.9.1"
+  eta: "^4.6.0"
+  feed: "^6.0.0"
+  fluid-tailwindcss: "^1.0.9"
+  hast-util-to-string: "^3.0.1"
+  input-otp: "^1.4.2"
+  intlayer: "9.4.1"
+  jsonc-parser: "^3.3.1"
+  lucide-react: "^1.14.0"
+  mermaid: "^11.14.0"
+  motion: "^13.1.1"
+  next: "16.3.3"
+  next-intlayer: "9.4.1"
+  next-seo: "^7.2.0"
+  next-themes: "^0.4.6"
+  nextstepjs: "^2.2.0"
+  npm-check-updates: ^23.1.0
+  nuqs: "^2.8.9"
+  prettier: ^3.9.6
+  pretty-bytes: "^7.1.0"
+  radix-ui: "^1.4.3"
+  raw-loader: "^4.0.2"
+  react: "19.2.8"
+  react-day-picker: "^10.0.1"
+  react-dom: "19.2.8"
+  react-email: "^6.6.3"
+  react-error-boundary: "^6.1.4"
+  react-markdown: "^10.1.0"
+  react-resizable-panels: "^4.11.1"
+  rehype-pretty-code: "^0.14.3"
+  rehype-slug: "^6.0.0"
+  remark-gfm: "^4.0.1"
+  server-only: "^0.0.1"
+  shiki: "^4.0.2"
+  smol-toml: "^1.6.1"
+  sonner: "^2.0.7"
+  stacktrace-parser: "^0.1.11"
+  tailwind-merge: "^3.5.0"
+  tailwindcss: "^4.2.4"
+  travels: "^2.2.0"
+  tw-animate-css: "^1.4.0"
+  typescript: "^6.0.3"
+  unist-util-visit: "^5.1.0"
+  velite: "^0.4.0"
+  vitest: "^4.1.11"
+  wrangler: "4.127.1"
+  yaml: "^2.8.4"
+  yet-another-react-lightbox: "^3.32.0"
+  zustand: "^5.0.12"
+  zustand-travel: "^2.2.0"
+  zx: "^8.8.5"
+  flare-redact: ^1.6.1
+
+minimumReleaseAgeExclude: "@wowlab/*"

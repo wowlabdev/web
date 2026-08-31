@@ -1,0 +1,47 @@
+import { insert, plural } from "intlayer";
+
+import { de } from "../i18n";
+
+// prettier-ignore
+export default de("enginePage", {
+  // apps/studio/src/components/dev/engine/auras-table.tsx, apps/studio/src/components/dev/engine/engine-content.tsx, apps/studio/src/components/dev/engine/hero-talents-section.tsx +4 more
+  "acrossSpecs": insert("über {{count}} Spezialisierungen"),
+  "auras": "Auren",
+  "badgeOffGcd": "Off-GCD",
+  "badgePet": "Begleiter",
+  "benchmarkReport": "Benchmark-Bericht",
+  "cast": "Zauberzeit",
+  "columnAura": "Aura",
+  "columnDuration": "Dauer",
+  "columnFlags": "Flags",
+  "columnName": "Name",
+  "columnPandemic": "Pandemic",
+  "columnPeriodic": "Periodisch",
+  "columnSpell": "Zauber",
+  "columnStacks": "Stapel",
+  "columnTalent": "Talent",
+  "columnTarget": "Ziel",
+  "columnType": "Typ",
+  "cooldown": "Abklingzeit",
+  "cost": "Kosten",
+  "damage": "Schaden",
+  "implementedSpecs": "Implementierte Spezialisierungen",
+  "intro": "Live-Inspektion der WASM-Simulations-Engine. Alles unten wird direkt zur Laufzeit aus dem kompilierten Binary gelesen.",
+  "no": "Nein",
+  "noHeroTalents": "Keine Heldentalente definiert.",
+  "openItemsReportAria": insert("{{slug}} Item-Report öffnen"),
+  "openManifestAria": insert("{{slug}} Manifest auf GitHub öffnen"),
+  "resourceStats": insert("Max {{max}} · Regen {{regen}}/s · Start {{start}}"),
+  "spec": "Spezialisierung",
+  "specCount": plural({ one: "{{count}} Spezialisierung", other: "{{count}} Spezialisierungen" }),
+  "spells": "Zauber",
+  "tabAurasCount": insert("Auren ({{count}})"),
+  "tabHeroCount": insert("Heldentalente ({{count}})"),
+  "tabSpellsCount": insert("Zauber ({{count}})"),
+  "tabTalentsCount": insert("Talente ({{count}})"),
+  "talents": "Talente",
+  "title": "Engine",
+  "typeAura": "Aura",
+  "typeSpell": "Zauber",
+  "yes": "Ja",
+});

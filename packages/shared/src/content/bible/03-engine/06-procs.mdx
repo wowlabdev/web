@@ -1,0 +1,68 @@
+---
+title: Procs
+description: RPPM with Bad Luck Protection and haste scaling, flat-chance procs, and per-impact proc filtering.
+nextSteps:
+  - 03-engine/07-resources
+---
+
+A proc is a random effect that fires off some trigger: a cast, a damage impact, a tick. The engine models two flavours: flat-chance rolls (a fixed probability per trigger) and <Term id="rppm">RPPM</Term> (real procs per minute), where the chance scales with how long it has been since the last attempt so that, on average, the proc fires a target number of times per minute regardless of attack speed.
+
+All of the random sampling lives in one crate, `engine-rng` (`crates/engine-rng/src/stochastic.rs`), layered on the deterministic [`SimRng`](/dev/bible/engine/event-system) that lives next to it in the same leaf crate. Every primitive takes the RNG as `rng: &mut dyn FnMut() -> f64` so combat code can pass its own seeded generator.
+
+## Flat-chance procs
+
+The simplest case is `proc_chance(rng, chance)`: one draw, `rng() < chance`. Every stochastic gate in the engine routes through this one primitive rather than rolling `rng() < chance` inline; a bare inline roll is a lint error (the `rust_raw_rng` Rulewright rule), so the rounding and clamp behaviour stays in exactly one place. There is also `roll_tier(rng, thresholds)` for tiered outcomes, which returns the index of the first ascending cumulative threshold the roll falls under, and `shuffle_pick`, a partial Fisher-Yates used to pick N random items. These are the building blocks. The interesting one is RPPM.
+
+## RPPM
+
+Each RPPM source has an `RppmTracker` holding its rate (`rppm`), the time of the last attempt and last successful proc, an accumulator for bad-luck protection (`accumulated_blp`), and two flags: `haste_scales` and `blp_enabled`:
+
+{/* docref struct procs-rppm-tracker */}
+
+`roll_rppm(tracker, now, haste_pct, rng)` does the work, and it is worth reading in order because each piece corrects for a real failure mode:
+
+1. **Same-time guard.** If this attempt is within `SAME_TIME_TOLERANCE_S = 0.001` of the last one, it returns `false` without rolling. Two events landing at the same instant must not double-roll the same proc.
+2. **Elapsed, capped.** `elapsed = (now - last_attempt).max(0)`, then capped at `MAX_INTERVAL_S = 3.5`. The cap stops a long gap (the pull, say, or a movement break) from handing out a near-guaranteed proc on the next attempt.
+3. **Haste scaling.** When `haste_scales` is set, `haste_factor = 1 + haste_pct/100`, otherwise `1.0`. This is what makes "per minute" hold as attack speed rises. Faster attacks mean more attempts, so each attempt's chance is scaled up by haste to keep the rate constant.
+4. **Base chance.** `base_chance = rppm * haste_factor * (elapsed / 60)`, the rate per minute converted to a probability for this interval.
+5. **Bad Luck Protection.** When enabled and the effective rate is positive, the longer you go without a proc, the higher the chance climbs. With `expected_interval = 60 / real_ppm` and `accumulated = min(accumulated_blp, MAX_BAD_LUCK_PROT_S)`:
+
+   ```
+   factor = max(1, 1 + (accumulated/expected_interval - 1.5) * 3)
+   chance = clamp(base_chance * factor, 0, 1)
+   ```
+
+   The `1.5` and `3.0` constants match the established SimulationCraft BLP factor, per the in-code note. The BLP cap is `MAX_BAD_LUCK_PROT_S = 1000`.
+
+6. **Roll and reset.** `success = rng() < chance`, `last_attempt_time` always advances, and on success `last_proc_time = now` and `accumulated_blp` resets to zero. The accumulator only grows between procs, so BLP ramps and then snaps back.
+
+A few candid notes. There is no explicit internal-cooldown (ICD) field on `RppmTracker`. The same-time guard plus the `MAX_INTERVAL_S` cap are the only time-based limiters, so an ICD'd proc would need to be modelled separately. And BLP here is the standard SimC formula, not Blizzard's exact (undocumented) implementation; it is a faithful reproduction of community-reverse-engineered behaviour, which is the best available reference.
+
+RPPM trackers are registered at build time. Item procs use `register_item_rppm`, which delegates to `rppm` to register the tracker, then indexes it by item id so the generated item code can look it up:
+
+{/* docref fn procs-register-item-rppm */}
+
+## Impact procs
+
+Many procs trigger on a damage impact rather than a cast. Those go through `fire_impact_procs`, called at the end of every `deal_damage` and every periodic tick. An `ImpactProc` carries a `chance`, the function to run, and a set of filters that decide whether this particular hit is eligible:
+
+<BibleTable id="impact-proc-fields">
+
+| Field           | Meaning                                                            |
+| --------------- | ------------------------------------------------------------------ |
+| `chance`        | flat per-eligible-impact proc probability                          |
+| `fire`          | the `ImpactProcFn` run on a successful roll                        |
+| `spell_filter`  | optional `fn(u32) -> bool` restricting which spells can trigger it |
+| `periodic_only` | only periodic (DoT/HoT) impacts are eligible                       |
+| `skip_periodic` | periodic impacts are ignored                                       |
+| `crit_only`     | only critical hits are eligible                                    |
+
+</BibleTable>
+
+Before doing any work, `fire_impact_procs` short-circuits on the cases that can never proc: no registered procs, a pet hit, or zero damage.
+
+{/* docref code procs-impact-short-circuit */}
+
+Pet damage explicitly does not trigger player impact procs, see [pets](/dev/bible/engine/pets). Past the guards it iterates the registered procs, applies each proc's filters, and rolls. To avoid cloning the proc vector on every damage event (the hot path), it uses a `mem::take` and restore against a reusable scratch buffer, the same allocation-avoidance pattern the cast hooks use.
+
+The proc function itself receives a `HookCtx`, the constrained post-event context that can apply or consume an aura, gain a resource, reduce or reset a cooldown, deal damage, schedule events, and roll RPPM, but cannot reach the raw event queue directly. That constraint is what keeps proc effects composable: a proc can only do things the engine knows how to schedule.

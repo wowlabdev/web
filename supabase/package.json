@@ -1,0 +1,23 @@
+{
+  "name": "@wowlab/supabase",
+  "version": "0.1.0",
+  "description": "Supabase Edge Functions for WoW Lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:ai": "zx scripts/deploy.mts ai",
+    "deploy:icons": "zx scripts/deploy.mts icons",
+    "format": "prettier --write --ignore-path ../.prettierignore .",
+    "lint": "zx scripts/lint.mts",
+    "lint:fix": "zx scripts/lint.mts --fix",
+    "ncu": "ncu -u",
+    "test": "deno test --frozen-lockfile --allow-sys=hostname --config functions/ai/deno.json functions/ai/governor.test.ts functions/ai/mcp/network-policy.test.ts",
+    "typecheck": "zx scripts/typecheck.mts"
+  },
+  "devDependencies": {
+    "@wowlab/eslint-config": "catalog:",
+    "eslint": "catalog:",
+    "supabase": "2.116.0",
+    "zx": "catalog:"
+  }
+}

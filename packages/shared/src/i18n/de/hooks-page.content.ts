@@ -1,0 +1,35 @@
+import { de } from "../i18n";
+
+// prettier-ignore
+export default de("hooksPage", {
+  // apps/studio/src/components/int/hooks/demo-helpers.tsx, apps/studio/src/components/int/hooks/demos-items.tsx, apps/studio/src/components/int/hooks/demos-specs.tsx +6 more
+  "class": "Klasse",
+  "columnId": "ID",
+  "columnSpell": "Zauber",
+  "empty": "Keine Zeilen",
+  "errorLabel": "Fehler",
+  "filterPlaceholder": "Hooks nach Name, Typ oder Quelle filtern",
+  "idsLabel": "IDs durch Komma getrennt",
+  "item": "Gegenstand",
+  "level": "Stufe",
+  "name": "Name",
+  "noResults": "Keine Hooks passen zu diesem Filter",
+  "notFound": "Kein Eintrag gefunden",
+  "quality": "Qualität",
+  "registryCaption": "in der Registry",
+  "resolved": "Aufgelöst",
+  "role": "Rolle",
+  "searching": "Suche läuft...",
+  "searchPlaceholder": "Nach Name suchen (mind. 3 Zeichen)",
+  "sourceGameData": "game-data",
+  "sourceServer": "react-query",
+  "spec": "Spezialisierung",
+  "tabDerived": "Abgeleitet",
+  "tabGlobal": "Global",
+  "tabLists": "Listen",
+  "tabSearch": "Suche",
+  "tabSingle": "Nach ID",
+  "titleGameData": "Spieldaten",
+  "titleHooks": "Hooks",
+  "titleServer": "Server",
+});

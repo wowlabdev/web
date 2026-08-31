@@ -1,0 +1,13 @@
+## Your previous output failed validation
+
+Fix exactly these engine validation errors and re-emit a corrected object:
+
+```json
+<%= it.priorErrorsJson %>
+```
+
+Previous (rejected) candidate:
+
+```json
+<%= it.priorCandidateJson %>
+```

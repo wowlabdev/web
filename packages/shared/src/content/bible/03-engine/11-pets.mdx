@@ -1,0 +1,35 @@
+---
+title: Pets
+description: The pet scaffolding that exists today, a damage tag, an auto-attack flag, a buffer slot, and what full pet modeling would require.
+nextSteps:
+  - 04-distribution/00-orchestration
+---
+
+I want to be candid here: pets are not a first-class actor in the engine. There is no separate pet event loop, no pet handler, no independent pet rotation. What exists is scaffolding: a handful of touch-points that let pet damage be attributed and let a rotation know a pet is present, sitting on top of the player's own [event loop](/dev/bible/engine/event-system). This page documents exactly that scaffolding and nothing more.
+
+## What's actually there
+
+**A pet flag on the manifest.** A spec can declare `has_pet` in its `[spec]` section. That flows through the build into `BaseStats.has_pet`.
+
+**A pet buffer slot.** The [DenseBuffer](/dev/bible/engine/rotation-compiler) carries a singleton `PetSlot` with three fields: `is_active`, `count`, and `expires_at`, exposed to rotations as `is_active`, `count`, and `remaining`. At buffer initialization a spec flagged `has_pet` starts with the pet summoned, so `pet.is_active` reads true from `t = 0`:
+
+{/* docref code pets-seed-slot */}
+
+That is the whole lifecycle. A rotation can branch on whether a pet is up, but the engine does not itself summon, dismiss, or time a pet. Those fields are seeded once and otherwise driven only by whatever a spec's hooks choose to write.
+
+**A pet auto-attack.** `AutoAttackData` has an `is_pet` flag. In `phase_auto_attacks`, a pet auto-attack is the branch that gets no weapon slot. Pets have no weapon item, so it deals AP-only damage on its own swing timer. This is the one place a pet generates damage on its own schedule, and it does so by riding the same `AutoAttack` event the player uses.
+
+**A pet damage tag.** Every damage instance carries an `is_pet` flag, through `HitFlags::PET` and on the `DamageEvent` itself. The telemetry accumulator keeps a separate `pet_damage_total`, summed whenever a tagged event arrives, and reports it as its own slice of the damage profile alongside direct and periodic damage. That is why the results UI can show a pet's share of total damage.
+
+**Pet hits don't trigger player procs.** `fire_impact_procs` returns immediately on a pet hit, and the AoE path treats pet hits as single-target. Pet damage is accounted for but kept out of the player's [proc](/dev/bible/engine/procs) and cleave machinery.
+
+## What this is not
+
+Taken together, the scaffolding lets a spec model a pet as a tagged source of auto-attack and ability damage that shares the player's clock and stats. What it does not provide:
+
+- No independent pet rotation or AI. A pet does not decide its own casts.
+- No pet stat sheet. Pet damage scales off the player's attack power via the auto-attack `ap_coef`, not a separate pet paperdoll.
+- No summon/despawn lifecycle beyond the seeded `PetSlot` fields; the `expires_at`/`count` fields exist but are not driven by a general pet-management system.
+- No pet-specific resources, cooldowns, or auras as first-class buffer domains.
+
+A proper pet implementation would mean a second actor: its own handler, its own slots in the buffer keyed per-pet, its own scheduled events, and a way to relate its stats to the owner's. That is a meaningful amount of structure, and the engine does not pretend to have it. The pet specs that exist today are approximated by folding pet output into the player's timeline as tagged damage, accurate enough for total throughput, but not a simulation of the pet as an entity. I would rather state that plainly than imply more.

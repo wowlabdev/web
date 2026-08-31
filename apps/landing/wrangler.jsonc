@@ -1,0 +1,94 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wowlab-landing",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-06-05",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "preview_urls": true,
+  "upload_source_maps": true,
+  "keep_names": false,
+  "routes": [{ "pattern": "wowlab.gg", "custom_domain": true }],
+  "vars": {
+    "OPEN_NEXT_REQUEST_ID_HEADER": "1",
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets",
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "wowlab-landing",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "wowlab-landing-cache",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      {
+        "name": "NEXT_TAG_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
+    },
+  ],
+  "observability": {
+    "enabled": true,
+  },
+  "tail_consumers": [{ "service": "wowlab-tail" }],
+  "env": {
+    "dev": {
+      "name": "wowlab-landing-dev",
+      "keep_names": false,
+      "routes": [{ "pattern": "dev.wowlab.gg", "custom_domain": true }],
+      "vars": {
+        "OPEN_NEXT_REQUEST_ID_HEADER": "1",
+      },
+      "assets": {
+        "binding": "ASSETS",
+        "directory": ".open-next/assets",
+      },
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "wowlab-landing-dev",
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "wowlab-landing-dev-cache",
+        },
+      ],
+      "durable_objects": {
+        "bindings": [
+          { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+          {
+            "name": "NEXT_TAG_CACHE_DO_SHARDED",
+            "class_name": "DOShardedTagCache",
+          },
+        ],
+      },
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
+        },
+      ],
+      "observability": {
+        "enabled": true,
+      },
+      "tail_consumers": [{ "service": "wowlab-tail-dev" }],
+    },
+  },
+}

@@ -1,0 +1,63 @@
+---
+title: State Management
+description: "The state systems in the studio app: React Query for server data, Zustand for the simulator form and the rotation editor, RxDB + TanStack DB for the game-data cache, and Supabase for data access."
+nextSteps:
+  - 05-portal/02-rotation-editor
+---
+
+The portal does not have one state store. It has several, each chosen for a different job: React Query owns server data, Zustand owns client state (both the persisted simulator form and the rotation editor's local document), RxDB + TanStack DB back the offline game-data cache, and Supabase is the data-access client underneath the queries. The rule of thumb is simple: server data goes through React Query, local client state goes through Zustand, and the bulk immutable game data lives in the RxDB/TanStack DB cache.
+
+I want to be upfront that this is more than one library would be in a smaller app. The split exists because these kinds of state really do have different lifetimes and access patterns; folding them into one store would mean fighting that.
+
+## React Query: server data
+
+Every read of database-backed data goes through `@tanstack/react-query`. The client is a lazily-constructed singleton, configured once with caching turned all the way up:
+
+{/* docref code state-mgmt-query-client */}
+
+`staleTime` and `gcTime` are both `Infinity` and `retry` is off. Caches are kept forever and never silently refetched, because the underlying game data is effectively immutable per patch and a failed query should surface, not loop. Query services live under `apps/studio/src/lib/query/services/`, grouped by domain: `jobs`, `rankings`, `billing`, `fleet`, and a `game/` subtree for specs, items, spells, and rotations.
+
+The one place that deviates is the live job poll. `useJob` sets a `refetchInterval` of 3000 ms while the job's status is `pending` or `running`, and `false` otherwise. That polling is a fallback; the realtime channel (covered in [the simulation UI](/dev/bible/portal/simulation-ui)) is the primary live path.
+
+## Zustand: the simulator form
+
+The cross-page simulator form is a single Zustand store, `useSimulatorStore` (`apps/studio/src/lib/state/simulator-store.ts`), built with `create()` and the `persist` middleware. It holds exactly the fields that must survive navigation between the import step, the configure step, and the results page: `simcInput`, `specId`, `rotationId`, `iterations`, `settingOverrides`, and a capped list of `recentSimcProfiles`. Iterations are clamped to `[1000, 1_000_000]` in `setIterations` so a hand-edited value can never blow up a run, and `addRecentSimcProfile` de-duplicates and caps the list at eight entries.
+
+<BibleTable id="portal-simulator-slice">
+
+| Field                | Type                | Purpose                                        |
+| -------------------- | ------------------- | ---------------------------------------------- |
+| `simcInput`          | `string`            | Raw pasted SimulationCraft profile             |
+| `specId`             | `number \| null`    | Spec detected from the talent loadout          |
+| `rotationId`         | `string \| null`    | Selected rotation for the run                  |
+| `iterations`         | `number`            | Clamped to `[1000, 1_000_000]`                 |
+| `settingOverrides`   | `Record<string, …>` | Per-setting overrides (bool / number / string) |
+| `recentSimcProfiles` | `string[]`          | Last 8 pasted profiles                         |
+
+</BibleTable>
+
+Persistence is the `persist` middleware, not a hand-rolled scheme. It writes a versioned envelope `{ state, version }` to `localStorage` under `wowlab:portal:simulator`, `partialize` selects the six fields above, and `version` guards the stored shape so a future schema change can migrate or discard stale data. Components read with selectors (`useSimulatorStore((s) => s.iterations)`) and call actions off the store; there is no provider, because Zustand stores are module singletons.
+
+## Zustand: the rotation editor document
+
+The rotation editor also uses Zustand, but instantiates it differently, and the reason is lifetime. The editor's state is the in-progress rotation document plus undo/redo history, dialog state, the live trace, and validation results, all of which should reset when you leave the editor, not persist across the app. So instead of a module singleton it is a **context-provided, per-mount** store: `EditorStoreProvider` creates the stores with `createStore` and tears them down on unmount, so navigating away discards the document and its history for free.
+
+It is split into two stores. The **document store** holds the undoable state — the `EditorScript` plus its `metadata` draft — and is wrapped in the [`zustand-travel`](https://github.com/mutativejs/zustand-travel) middleware, which owns undo/redo as a patch history (`maxHistory` of 50, manual `archive()` on each discrete edit and on metadata commit, `reset()` back to the loaded baseline). The transient **UI store** holds dialog, selection, trace, validation, and the new-rotation setup flow — state that must not be undoable, and so is kept out of the tracked store. The document at the center of all this is the `EditorScript`:
+
+{/* docref struct state-mgmt-editor-script */}
+
+The editor itself is the subject of [the next page](/dev/bible/portal/rotation-editor).
+
+## RxDB + TanStack DB: the game-data cache
+
+Bulk game reference data — spells, items, specs, talent trees, scaling tables — is not fetched per-view through React Query. It is synced once into an offline-first store under `apps/studio/src/lib/game-data/`: RxDB (backed by Dexie/IndexedDB) is the persistence layer, and TanStack DB collections wrap it to expose reactive live queries to components. Because this data is immutable per patch, it is loaded ahead of time and read locally, which is why the React Query client above can keep its caches forever without refetching.
+
+## Supabase: data access
+
+All of the React Query services that hit the database use the browser Supabase client. It is created with `createBrowserClient` from `@supabase/ssr`:
+
+{/* docref code state-mgmt-supabase-client */}
+
+It pulls the public env (`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`); auth cookies are host-only, scoped to the studio app itself. Reads are plain PostgREST calls. `useJob`, for instance, selects a row from `jobs` by id. Writes that need server logic go through RPCs, such as `supabase.rpc("create_job", …)` for job submission. The database schema behind these calls is documented in [the database section](/dev/bible/distribution/database).
+
+One thing the portal does **not** use is a higher-level CRUD framework. The data layer is React Query services calling the Supabase client directly; there is no admin/resource abstraction layer on top of it.

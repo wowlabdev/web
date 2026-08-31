@@ -1,0 +1,31 @@
+{
+  "name": "@wowlab/scripts",
+  "version": "0.1.0",
+  "description": "Development and deployment tooling for WoW Lab Web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check:i18n": "zx i18n/check.mts",
+    "deploy:cloudflare": "zx cli/deploy-cloudflare.mts",
+    "deployment:context": "zx cli/deployment-context.mts",
+    "format": "prettier --write --ignore-path ../../.prettierignore .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:workspace": "zx cli/lint.mts",
+    "lint:workspace:fix": "zx cli/lint.mts --fix",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "catalog:",
+    "dotenv": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@wowlab/eslint-config": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zx": "catalog:"
+  }
+}

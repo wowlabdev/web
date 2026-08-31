@@ -1,0 +1,15 @@
+Audit every spell and aura in this rotation against the real game data and flag anything invalid or suspicious.
+
+Build the full list first: take every spell id and applied-aura id from the Resolved spells section, every spell referenced in the rotation JSON, and every aura read by a condition. Then verify them with the wowlab game-data tools in batched calls (resolve_effects / query_batch over the whole id list) rather than one lookup per spell. Cover every entry, not a sample.
+
+Flag, with the offending id and a one-line reason:
+- slugs marked UNRESOLVED or missing from the spec catalog
+- ids that don't resolve to a real spell
+- an applies-aura id whose spell doesn't actually apply that aura
+- a condition reading an aura that nothing in the rotation ever applies
+- zero or missing cast time, cooldown, duration, or cost where a value is expected
+- school or resource-type mismatches against the game data
+- passive or non-castable spells used as cast actions
+- anything else that looks off
+
+Group findings by spell and render every spell and aura as an inline tooltip link. Finish with a one-line list of what checked out clean, or state plainly that everything is valid.

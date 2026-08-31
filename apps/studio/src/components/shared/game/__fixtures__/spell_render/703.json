@@ -1,0 +1,233 @@
+{
+  "spell_id": 703,
+  "spec_id": 260,
+  "input": {
+    "self_spell": {
+      "id": 703,
+      "description": "Garrote the enemy, causing $o1 Bleed damage over $d.$?a196861[ Silences the target for $1330d when used from Stealth.][]\r\n\r\n|cFFFFFFFFAwards $s3 combo $lpoint:points;.|r",
+      "description_variables": "",
+      "cast_time": 0,
+      "recovery_time": 6000,
+      "duration": 18000,
+      "max_charges": 0,
+      "max_stacks": 1,
+      "range_max_0": 5.0,
+      "proc_rppm": 0.0,
+      "internal_cooldown": 6000,
+      "file_name": "ability_rogue_garrote",
+      "name": "Garrote",
+      "effects": [
+        {
+          "index": 0,
+          "effect": 6,
+          "aura": 3,
+          "base_points": 0.0,
+          "period": 2000,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.45149999857,
+          "amplitude": 0.0,
+          "pvp_multiplier": 0.85
+        },
+        {
+          "index": 1,
+          "effect": 6,
+          "aura": 4,
+          "base_points": 0.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        },
+        {
+          "index": 2,
+          "effect": 30,
+          "aura": 0,
+          "base_points": 1.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 4,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        },
+        {
+          "index": 3,
+          "effect": 6,
+          "aura": 271,
+          "base_points": 0.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        }
+      ]
+    },
+    "cross_spells": [
+      {
+        "id": 1330,
+        "description": "Silences an enemy for $d.",
+        "description_variables": "",
+        "cast_time": 0,
+        "recovery_time": 0,
+        "duration": 5000,
+        "max_charges": 0,
+        "max_stacks": 1,
+        "range_max_0": 50000.0,
+        "proc_rppm": 0.0,
+        "internal_cooldown": 0,
+        "file_name": "ability_rogue_garrote",
+        "name": "Garrote - Silence",
+        "effects": [
+          {
+            "index": 0,
+            "effect": 6,
+            "aura": 27,
+            "base_points": 0.0,
+            "period": 0,
+            "chain_targets": 0,
+            "trigger_spell": 0,
+            "misc_value_0": 127,
+            "misc_value_1": 0,
+            "radius_min": 0.0,
+            "radius_max": 0.0,
+            "coefficient": 0.0,
+            "points_per_resource": 0.0,
+            "variance": 0.0,
+            "bonus_coefficient": 0.0,
+            "bonus_coefficient_from_ap": 0.0,
+            "amplitude": 0.0,
+            "pvp_multiplier": 1.0
+          }
+        ]
+      }
+    ],
+    "paperdoll": {
+      "spec_id": 260,
+      "spec_order_index": 0,
+      "class_id": 4,
+      "level": 90,
+      "is_male": true,
+      "max_health": 36080.0,
+      "role_mult": 1.0,
+      "stats": {
+        "attack_power": 1131.0,
+        "spell_power": 1131.0,
+        "primary_stat": 1131.0,
+        "intellect": 0.0,
+        "crit": 10.85,
+        "haste": 3.0055555555555555,
+        "mastery": 1.488888888888889,
+        "versatility": 1.8555555555555556
+      },
+      "weapon": {
+        "main_min": 0.0,
+        "main_max": 0.0,
+        "main_speed": 2.6,
+        "off_min": 0.0,
+        "off_max": 0.0,
+        "off_speed": 1.8
+      },
+      "known_spell_ids": [
+        1766, 2094, 2098, 3408, 5277, 5761, 5938, 8676, 8679, 13750, 13877,
+        14161, 14983, 31224, 35551, 51690, 57934, 61329, 79008, 86392, 185763,
+        193315, 193531, 193539, 193546, 196819, 196938, 231691, 231719, 235484,
+        256170, 271877, 272026, 279876, 280716, 315341, 315496, 315508, 315584,
+        315585, 378427, 378436, 378813, 378996, 381542, 381543, 381619, 381621,
+        381637, 381828, 381839, 381846, 381877, 381878, 381988, 381989, 394321,
+        394931, 395422, 423647, 423662, 423683, 428377, 441146, 441247, 441263,
+        441273, 441274, 441321, 441346, 441367, 441403, 441423, 441429, 452536,
+        469779, 470347, 470668, 1256630, 1259469, 1259481, 1259485, 1259498,
+        1259499, 1265861, 1267210, 1267216, 1267220, 1276626, 1276630, 1276679,
+        1277933
+      ],
+      "active_aura_ids": [
+        1784, 1856, 3408, 5761, 8679, 13750, 13877, 14983, 115192, 134735,
+        195627, 256171, 315341, 315496, 315584, 381637, 381878, 383281, 386270,
+        395422, 432021, 452917, 452923, 453250, 1214933, 1214934, 1214935,
+        1214937, 1249194
+      ]
+    }
+  },
+  "expected_fragments": [
+    {
+      "kind": "text",
+      "value": "Garrote the enemy, causing "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " Bleed damage over "
+    },
+    {
+      "kind": "duration",
+      "value": "18 sec",
+      "raw_ms": 18000.0
+    },
+    {
+      "kind": "text",
+      "value": ".\n\n"
+    },
+    {
+      "kind": "colorStart",
+      "color": "cFFFFFFFF"
+    },
+    {
+      "kind": "text",
+      "value": "Awards "
+    },
+    {
+      "kind": "value",
+      "value": "1",
+      "raw": 1.0
+    },
+    {
+      "kind": "text",
+      "value": " combo point."
+    },
+    {
+      "kind": "colorEnd"
+    }
+  ],
+  "expected_text": "Garrote the enemy, causing 0 Bleed damage over 18 sec.\n\nAwards 1 combo point."
+}

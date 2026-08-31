@@ -1,0 +1,19 @@
+import {
+  ErrorPageNotFound,
+  ErrorPageShell,
+} from "@wowlab/shared/components/common/errors";
+
+import "./globals.css";
+
+// Runs outside the [locale] segment with no IntlayerProvider, so strings stay English.
+export default function GlobalNotFound() {
+  return (
+    <ErrorPageShell title="404 · Page not found">
+      <ErrorPageNotFound
+        actionLabel="Back to home"
+        description="It might have moved, or it never existed. Either way, here's the way back."
+        subtitle="I can't find that page."
+      />
+    </ErrorPageShell>
+  );
+}

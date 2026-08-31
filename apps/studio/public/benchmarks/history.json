@@ -1,0 +1,1154 @@
+{
+  "runs": [
+    {
+      "engine_version": "0.1.0",
+      "timestamp": "2026-04-03T13:14:48Z",
+      "git_hash": "1c1cd2f3",
+      "git_branch": "current-thing",
+      "rustc_version": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+      "features": [],
+      "backend": "portable",
+      "system": {
+        "cpu_model": "Apple M3 Pro",
+        "logical_cores": 12,
+        "physical_cores": 12,
+        "optimal_cores": 6,
+        "p_cores": 6,
+        "e_cores": 6,
+        "total_memory_mb": 36864,
+        "available_memory_mb": 13639,
+        "os": "macos",
+        "arch": "aarch64"
+      },
+      "results": [
+        {
+          "slug": "arcane_mage",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 54,
+          "iterations_per_sec": 18518.5,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 1416.7,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "arms_warrior",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 87,
+          "iterations_per_sec": 11494.3,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 34696.5,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "assassination_rogue",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 130,
+          "iterations_per_sec": 7692.3,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 11362.0,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "balance_druid",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 93,
+          "iterations_per_sec": 10752.7,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 1871.7,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "beast_mastery_hunter",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 109,
+          "iterations_per_sec": 9174.3,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 3337.5,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "devastation_evoker",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 90,
+          "iterations_per_sec": 11111.1,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 10092.0,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "elemental_shaman",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 58,
+          "iterations_per_sec": 17241.4,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 0.0,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "fire_mage",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 32,
+          "iterations_per_sec": 31250.0,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 2208.3,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "frost_death_knight",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 1122,
+          "iterations_per_sec": 891.3,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 1870.5,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "frost_mage",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 44,
+          "iterations_per_sec": 22727.3,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 1155.0,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "marksmanship_hunter",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 50,
+          "iterations_per_sec": 20000.0,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 593.3,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "outlaw_rogue",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 104,
+          "iterations_per_sec": 9615.4,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 7260.0,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "retribution_paladin",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 15643,
+          "iterations_per_sec": 63.9,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 21.3,
+          "semantic_fingerprint": ""
+        },
+        {
+          "slug": "subtlety_rogue",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1000,
+          "duration_secs": 300,
+          "warmups": 0,
+          "samples": [],
+          "elapsed_ms": 124,
+          "iterations_per_sec": 8064.5,
+          "mean_iterations_per_sec": 0.0,
+          "median_iterations_per_sec": 0.0,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 50776.9,
+          "semantic_fingerprint": ""
+        }
+      ],
+      "scaling": [
+        {
+          "slug": "arcane_mage",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 34,
+              "iterations_per_sec": 29411.8,
+              "multiplier": 1.59,
+              "efficiency": 1.588,
+              "marginal_gain": 0.588,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 24,
+              "iterations_per_sec": 41666.7,
+              "multiplier": 2.25,
+              "efficiency": 1.125,
+              "marginal_gain": 0.417,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 19,
+              "iterations_per_sec": 52631.6,
+              "multiplier": 2.84,
+              "efficiency": 0.711,
+              "marginal_gain": 0.263,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 19,
+              "iterations_per_sec": 52631.6,
+              "multiplier": 2.84,
+              "efficiency": 0.474,
+              "marginal_gain": 0.0,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 22,
+              "iterations_per_sec": 45454.5,
+              "multiplier": 2.45,
+              "efficiency": 0.205,
+              "marginal_gain": -0.136,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "arms_warrior",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 72,
+              "iterations_per_sec": 13888.9,
+              "multiplier": 1.21,
+              "efficiency": 1.208,
+              "marginal_gain": 0.208,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 42,
+              "iterations_per_sec": 23809.5,
+              "multiplier": 2.07,
+              "efficiency": 1.036,
+              "marginal_gain": 0.714,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 26,
+              "iterations_per_sec": 38461.5,
+              "multiplier": 3.35,
+              "efficiency": 0.837,
+              "marginal_gain": 0.615,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 23,
+              "iterations_per_sec": 43478.3,
+              "multiplier": 3.78,
+              "efficiency": 0.63,
+              "marginal_gain": 0.13,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 25,
+              "iterations_per_sec": 40000.0,
+              "multiplier": 3.48,
+              "efficiency": 0.29,
+              "marginal_gain": -0.08,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "assassination_rogue",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 108,
+              "iterations_per_sec": 9259.3,
+              "multiplier": 1.2,
+              "efficiency": 1.204,
+              "marginal_gain": 0.204,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 71,
+              "iterations_per_sec": 14084.5,
+              "multiplier": 1.83,
+              "efficiency": 0.915,
+              "marginal_gain": 0.521,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 48,
+              "iterations_per_sec": 20833.3,
+              "multiplier": 2.71,
+              "efficiency": 0.677,
+              "marginal_gain": 0.479,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 47,
+              "iterations_per_sec": 21276.6,
+              "multiplier": 2.77,
+              "efficiency": 0.461,
+              "marginal_gain": 0.021,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 54,
+              "iterations_per_sec": 18518.5,
+              "multiplier": 2.41,
+              "efficiency": 0.201,
+              "marginal_gain": -0.13,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "balance_druid",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 76,
+              "iterations_per_sec": 13157.9,
+              "multiplier": 1.22,
+              "efficiency": 1.224,
+              "marginal_gain": 0.224,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 46,
+              "iterations_per_sec": 21739.1,
+              "multiplier": 2.02,
+              "efficiency": 1.011,
+              "marginal_gain": 0.652,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 33,
+              "iterations_per_sec": 30303.0,
+              "multiplier": 2.82,
+              "efficiency": 0.705,
+              "marginal_gain": 0.394,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 31,
+              "iterations_per_sec": 32258.1,
+              "multiplier": 3.0,
+              "efficiency": 0.5,
+              "marginal_gain": 0.065,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 41,
+              "iterations_per_sec": 24390.2,
+              "multiplier": 2.27,
+              "efficiency": 0.189,
+              "marginal_gain": -0.244,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "beast_mastery_hunter",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 98,
+              "iterations_per_sec": 10204.1,
+              "multiplier": 1.11,
+              "efficiency": 1.112,
+              "marginal_gain": 0.112,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 52,
+              "iterations_per_sec": 19230.8,
+              "multiplier": 2.1,
+              "efficiency": 1.048,
+              "marginal_gain": 0.885,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 33,
+              "iterations_per_sec": 30303.0,
+              "multiplier": 3.3,
+              "efficiency": 0.826,
+              "marginal_gain": 0.576,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 26,
+              "iterations_per_sec": 38461.5,
+              "multiplier": 4.19,
+              "efficiency": 0.699,
+              "marginal_gain": 0.269,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 28,
+              "iterations_per_sec": 35714.3,
+              "multiplier": 3.89,
+              "efficiency": 0.324,
+              "marginal_gain": -0.071,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "devastation_evoker",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 73,
+              "iterations_per_sec": 13698.6,
+              "multiplier": 1.23,
+              "efficiency": 1.233,
+              "marginal_gain": 0.233,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 40,
+              "iterations_per_sec": 25000.0,
+              "multiplier": 2.25,
+              "efficiency": 1.125,
+              "marginal_gain": 0.825,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 25,
+              "iterations_per_sec": 40000.0,
+              "multiplier": 3.6,
+              "efficiency": 0.9,
+              "marginal_gain": 0.6,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 23,
+              "iterations_per_sec": 43478.3,
+              "multiplier": 3.91,
+              "efficiency": 0.652,
+              "marginal_gain": 0.087,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 23,
+              "iterations_per_sec": 43478.3,
+              "multiplier": 3.91,
+              "efficiency": 0.326,
+              "marginal_gain": 0.0,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "elemental_shaman",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 42,
+              "iterations_per_sec": 23809.5,
+              "multiplier": 1.38,
+              "efficiency": 1.381,
+              "marginal_gain": 0.381,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 28,
+              "iterations_per_sec": 35714.3,
+              "multiplier": 2.07,
+              "efficiency": 1.036,
+              "marginal_gain": 0.5,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 21,
+              "iterations_per_sec": 47619.0,
+              "multiplier": 2.76,
+              "efficiency": 0.69,
+              "marginal_gain": 0.333,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 23,
+              "iterations_per_sec": 43478.3,
+              "multiplier": 2.52,
+              "efficiency": 0.42,
+              "marginal_gain": -0.087,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 25,
+              "iterations_per_sec": 40000.0,
+              "multiplier": 2.32,
+              "efficiency": 0.193,
+              "marginal_gain": -0.08,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "fire_mage",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 24,
+              "iterations_per_sec": 41666.7,
+              "multiplier": 1.33,
+              "efficiency": 1.333,
+              "marginal_gain": 0.333,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 15,
+              "iterations_per_sec": 66666.7,
+              "multiplier": 2.13,
+              "efficiency": 1.067,
+              "marginal_gain": 0.6,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 11,
+              "iterations_per_sec": 90909.1,
+              "multiplier": 2.91,
+              "efficiency": 0.727,
+              "marginal_gain": 0.364,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 10,
+              "iterations_per_sec": 100000.0,
+              "multiplier": 3.2,
+              "efficiency": 0.533,
+              "marginal_gain": 0.1,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 13,
+              "iterations_per_sec": 76923.1,
+              "multiplier": 2.46,
+              "efficiency": 0.205,
+              "marginal_gain": -0.231,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "frost_death_knight",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 1131,
+              "iterations_per_sec": 884.2,
+              "multiplier": 0.99,
+              "efficiency": 0.992,
+              "marginal_gain": -0.008,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 575,
+              "iterations_per_sec": 1739.1,
+              "multiplier": 1.95,
+              "efficiency": 0.976,
+              "marginal_gain": 0.967,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 295,
+              "iterations_per_sec": 3389.8,
+              "multiplier": 3.8,
+              "efficiency": 0.951,
+              "marginal_gain": 0.949,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 201,
+              "iterations_per_sec": 4975.1,
+              "multiplier": 5.58,
+              "efficiency": 0.93,
+              "marginal_gain": 0.468,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 151,
+              "iterations_per_sec": 6622.5,
+              "multiplier": 7.43,
+              "efficiency": 0.619,
+              "marginal_gain": 0.331,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "frost_mage",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 37,
+              "iterations_per_sec": 27027.0,
+              "multiplier": 1.19,
+              "efficiency": 1.189,
+              "marginal_gain": 0.189,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 21,
+              "iterations_per_sec": 47619.0,
+              "multiplier": 2.1,
+              "efficiency": 1.048,
+              "marginal_gain": 0.762,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 13,
+              "iterations_per_sec": 76923.1,
+              "multiplier": 3.38,
+              "efficiency": 0.846,
+              "marginal_gain": 0.615,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 11,
+              "iterations_per_sec": 90909.1,
+              "multiplier": 4.0,
+              "efficiency": 0.667,
+              "marginal_gain": 0.182,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 13,
+              "iterations_per_sec": 76923.1,
+              "multiplier": 3.38,
+              "efficiency": 0.282,
+              "marginal_gain": -0.154,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "marksmanship_hunter",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 45,
+              "iterations_per_sec": 22222.2,
+              "multiplier": 1.11,
+              "efficiency": 1.111,
+              "marginal_gain": 0.111,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 27,
+              "iterations_per_sec": 37037.0,
+              "multiplier": 1.85,
+              "efficiency": 0.926,
+              "marginal_gain": 0.667,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 18,
+              "iterations_per_sec": 55555.6,
+              "multiplier": 2.78,
+              "efficiency": 0.694,
+              "marginal_gain": 0.5,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 17,
+              "iterations_per_sec": 58823.5,
+              "multiplier": 2.94,
+              "efficiency": 0.49,
+              "marginal_gain": 0.059,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 19,
+              "iterations_per_sec": 52631.6,
+              "multiplier": 2.63,
+              "efficiency": 0.219,
+              "marginal_gain": -0.105,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "outlaw_rogue",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 93,
+              "iterations_per_sec": 10752.7,
+              "multiplier": 1.12,
+              "efficiency": 1.118,
+              "marginal_gain": 0.118,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 56,
+              "iterations_per_sec": 17857.1,
+              "multiplier": 1.86,
+              "efficiency": 0.929,
+              "marginal_gain": 0.661,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 36,
+              "iterations_per_sec": 27777.8,
+              "multiplier": 2.89,
+              "efficiency": 0.722,
+              "marginal_gain": 0.556,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 31,
+              "iterations_per_sec": 32258.1,
+              "multiplier": 3.35,
+              "efficiency": 0.559,
+              "marginal_gain": 0.161,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 32,
+              "iterations_per_sec": 31250.0,
+              "multiplier": 3.25,
+              "efficiency": 0.271,
+              "marginal_gain": -0.031,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "retribution_paladin",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 15685,
+              "iterations_per_sec": 63.8,
+              "multiplier": 1.0,
+              "efficiency": 0.998,
+              "marginal_gain": -0.002,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 7735,
+              "iterations_per_sec": 129.3,
+              "multiplier": 2.02,
+              "efficiency": 1.012,
+              "marginal_gain": 1.028,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 3925,
+              "iterations_per_sec": 254.8,
+              "multiplier": 3.99,
+              "efficiency": 0.997,
+              "marginal_gain": 0.971,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 2810,
+              "iterations_per_sec": 355.9,
+              "multiplier": 5.57,
+              "efficiency": 0.928,
+              "marginal_gain": 0.397,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 1790,
+              "iterations_per_sec": 558.7,
+              "multiplier": 8.74,
+              "efficiency": 0.729,
+              "marginal_gain": 0.57,
+              "is_p_core_range": false
+            }
+          ]
+        },
+        {
+          "slug": "subtlety_rogue",
+          "iterations": 1000,
+          "points": [
+            {
+              "threads": 1,
+              "elapsed_ms": 113,
+              "iterations_per_sec": 8849.6,
+              "multiplier": 1.1,
+              "efficiency": 1.097,
+              "marginal_gain": 0.097,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 2,
+              "elapsed_ms": 64,
+              "iterations_per_sec": 15625.0,
+              "multiplier": 1.94,
+              "efficiency": 0.969,
+              "marginal_gain": 0.766,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 4,
+              "elapsed_ms": 41,
+              "iterations_per_sec": 24390.2,
+              "multiplier": 3.02,
+              "efficiency": 0.756,
+              "marginal_gain": 0.561,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 6,
+              "elapsed_ms": 32,
+              "iterations_per_sec": 31250.0,
+              "multiplier": 3.88,
+              "efficiency": 0.646,
+              "marginal_gain": 0.281,
+              "is_p_core_range": true
+            },
+            {
+              "threads": 12,
+              "elapsed_ms": 32,
+              "iterations_per_sec": 31250.0,
+              "multiplier": 3.88,
+              "efficiency": 0.323,
+              "marginal_gain": 0.0,
+              "is_p_core_range": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "engine_version": "0.1.0",
+      "timestamp": "2026-07-07T11:53:08Z",
+      "git_hash": "3f6e65e9",
+      "git_branch": "landing-rework",
+      "rustc_version": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+      "features": [],
+      "backend": "portable",
+      "system": {
+        "cpu_model": "Intel(R) Core(TM) i7-14700K",
+        "logical_cores": 16,
+        "physical_cores": 16,
+        "optimal_cores": 16,
+        "p_cores": 16,
+        "e_cores": 0,
+        "total_memory_mb": 32088,
+        "available_memory_mb": 28097,
+        "os": "linux",
+        "arch": "x86_64"
+      },
+      "results": [],
+      "scaling": []
+    },
+    {
+      "engine_version": "0.1.0",
+      "timestamp": "2026-08-18T00:05:33Z",
+      "git_hash": "c9f683ff1",
+      "git_branch": "landing-rework",
+      "rustc_version": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+      "features": [],
+      "backend": "portable",
+      "system": {
+        "cpu_model": "Intel(R) Core(TM) i7-14700K",
+        "logical_cores": 16,
+        "physical_cores": 16,
+        "optimal_cores": 16,
+        "p_cores": 16,
+        "e_cores": 0,
+        "total_memory_mb": 32088,
+        "available_memory_mb": 24886,
+        "os": "linux",
+        "arch": "x86_64"
+      },
+      "results": [
+        {
+          "slug": "beast_mastery_hunter",
+          "encounter_fixture": "patchwerk",
+          "backend": "portable",
+          "iterations": 1,
+          "duration_secs": 1,
+          "warmups": 1,
+          "samples": [
+            {
+              "sample": 1,
+              "elapsed_ms": 1.538612999999998,
+              "iterations_per_sec": 649.9360137994423,
+              "mean_dps": 278707.3,
+              "semantic_fingerprint": "be34b9db6d00cd462ee38181e95beea23f48c3ebcb89a247b202c72445378689",
+              "counters": {
+                "rotation_evaluations": 4,
+                "rotation_ast_lowerings": 0,
+                "events": 20,
+                "damage_events": 22,
+                "aura_events": 24,
+                "damage_action_setups": 24,
+                "damage_owner_setups": 24,
+                "damage_target_setups": 24,
+                "damage_targets": 24,
+                "aura_slots_visited": 391410,
+                "planned_aura_bindings": 48,
+                "scanned_aura_definitions": 0,
+                "planned_aura_spell_bindings": 0,
+                "scanned_aura_spells": 0,
+                "planned_aura_projection_bindings": 0,
+                "scanned_aura_projections": 0,
+                "planned_rotation_projection_bindings": 16,
+                "scanned_rotation_projection_spells": 0,
+                "keyed_lookups": 0,
+                "game_data_hot_reads": 0,
+                "damage_plan_keyed_lookups": 0,
+                "damage_plan_raw_binary_searches": 0,
+                "target_plan_runtime_lowerings": 0,
+                "target_plan_runtime_fallbacks": 0,
+                "resets": 2,
+                "reset_time_ns": 416713
+              },
+              "build_time_ms": 418.701884,
+              "reset_time_ms": 0.416713,
+              "allocations": {
+                "count": 83,
+                "bytes": 1794138
+              }
+            }
+          ],
+          "elapsed_ms": 2,
+          "iterations_per_sec": 649.9,
+          "mean_iterations_per_sec": 649.9360137994423,
+          "median_iterations_per_sec": 649.9360137994423,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 278707.3,
+          "semantic_fingerprint": "be34b9db6d00cd462ee38181e95beea23f48c3ebcb89a247b202c72445378689"
+        }
+      ],
+      "scaling": []
+    },
+    {
+      "engine_version": "0.1.0",
+      "timestamp": "2026-08-18T00:07:40Z",
+      "git_hash": "c9f683ff1",
+      "git_branch": "landing-rework",
+      "rustc_version": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+      "features": ["jit"],
+      "backend": "jit",
+      "system": {
+        "cpu_model": "Intel(R) Core(TM) i7-14700K",
+        "logical_cores": 16,
+        "physical_cores": 16,
+        "optimal_cores": 16,
+        "p_cores": 16,
+        "e_cores": 0,
+        "total_memory_mb": 32088,
+        "available_memory_mb": 24828,
+        "os": "linux",
+        "arch": "x86_64"
+      },
+      "results": [
+        {
+          "slug": "beast_mastery_hunter",
+          "encounter_fixture": "patchwerk",
+          "backend": "jit",
+          "iterations": 1,
+          "duration_secs": 1,
+          "warmups": 1,
+          "samples": [
+            {
+              "sample": 1,
+              "elapsed_ms": 1.488250999999991,
+              "iterations_per_sec": 671.9296677778184,
+              "mean_dps": 278707.3,
+              "semantic_fingerprint": "be34b9db6d00cd462ee38181e95beea23f48c3ebcb89a247b202c72445378689",
+              "counters": {
+                "rotation_evaluations": 4,
+                "rotation_ast_lowerings": 0,
+                "events": 20,
+                "damage_events": 22,
+                "aura_events": 24,
+                "damage_action_setups": 24,
+                "damage_owner_setups": 24,
+                "damage_target_setups": 24,
+                "damage_targets": 24,
+                "aura_slots_visited": 391410,
+                "planned_aura_bindings": 48,
+                "scanned_aura_definitions": 0,
+                "planned_aura_spell_bindings": 0,
+                "scanned_aura_spells": 0,
+                "planned_aura_projection_bindings": 0,
+                "scanned_aura_projections": 0,
+                "planned_rotation_projection_bindings": 16,
+                "scanned_rotation_projection_spells": 0,
+                "keyed_lookups": 0,
+                "game_data_hot_reads": 0,
+                "damage_plan_keyed_lookups": 0,
+                "damage_plan_raw_binary_searches": 0,
+                "target_plan_runtime_lowerings": 0,
+                "target_plan_runtime_fallbacks": 0,
+                "resets": 2,
+                "reset_time_ns": 398015
+              },
+              "build_time_ms": 408.610638,
+              "reset_time_ms": 0.398015,
+              "allocations": {
+                "count": 83,
+                "bytes": 1794138
+              }
+            }
+          ],
+          "elapsed_ms": 1,
+          "iterations_per_sec": 671.9,
+          "mean_iterations_per_sec": 671.9296677778184,
+          "median_iterations_per_sec": 671.9296677778184,
+          "population_stddev_iterations_per_sec": 0.0,
+          "mean_dps": 278707.3,
+          "semantic_fingerprint": "be34b9db6d00cd462ee38181e95beea23f48c3ebcb89a247b202c72445378689"
+        }
+      ],
+      "scaling": []
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+---
+title: Database
+description: Two schemas in one Postgres, read-only game data and the public jobs/nodes tables, and why in-flight chunk state never reaches the database.
+nextSteps:
+  - 05-portal/00-architecture
+---
+
+There is one Postgres database, on Supabase, with two very different jobs. The `game` schema is the read-only reference data the engine consumes: spells, items, specs, scaling curves. The `public` schema is the operational state of the platform: who submitted which job, which nodes are online, and the final results. The first is read heavily and written rarely; the second is the system of record for everything except the part of the job lifecycle that is hottest.
+
+## Two schemas
+
+The `game` schema holds the parsed DBC data. Nodes and browsers read it through Supabase PostgREST behind the resolver's [3-layer cache](/dev/bible/game-data/data-resolution); the sentinel does not touch it on the hot path. Its tables are `game.spells`, `game.items`, `game.specs`, `game.specs_traits`, `game.power_types`, and the scaling tables. How they map to the engine's flat types is the subject of the [game data section](/dev/bible/game-data/dbc-overview). For distribution, what matters is that game data is effectively static between content patches, so it caches well and never bottlenecks the scheduler.
+
+The `public` schema is the operational state. The sentinel connects to it directly over `SENTINEL_DATABASE_URL` for its `LISTEN/NOTIFY` loop and its SQL queries. Two tables carry the distribution system.
+
+### public.jobs
+
+A job is one simulation request. Its columns, as read and written by the sentinel's queries, are `id`, `user_id`, `sim_config`, `sentinel_config`, `meta` (jsonb), `status`, `result_pb`, and `timeline_pb`. The lifecycle in the DB is narrow:
+
+- The studio app inserts a row at `status = 'pending'`; a database trigger fires `NOTIFY pending_job`, which is what wakes the [scheduler](/dev/bible/distribution/hosted-compute).
+- The scheduler flips `pending → running` via `scheduler_mark_running.sql` when it builds the in-memory runtime.
+- `finalize_job` writes the terminal state through `jobs_finalize.sql`: `status = 'completed'`, the `meta` jsonb, and the protobuf `result_pb`/`timeline_pb`. `timeline_pb` is written with `COALESCE` so it is only overwritten when present.
+- On failure the reclaim cron sets `status = 'failed'` via `reclaim_mark_failed.sql`.
+
+That is the entire DB footprint of a job: pending, running, then completed or failed. The browser reads the finished row back. `result_pb` and `timeline_pb` are hex-encoded bytea that the common WASM `decodeJobResult` turns into view structs for the [results UI](/dev/bible/portal/simulation-ui).
+
+### public.nodes
+
+A node is one registered compute contributor. Its columns are `public_key`, `user_id`, `name`, `total_cores`, `max_parallel`, `platform`, `version`, and `status`. The `public_key` is the node's base64url Ed25519 identity, the same key it signs requests with. `total_cores` and `max_parallel` are what the scheduler turns into capacity (`min(max_parallel, total_cores)`), and `status` is what the [presence cron](/dev/bible/distribution/realtime) reconciles against Centrifugo presence: a node listed online in the bus but offline in this table, or vice versa, gets written to match. The scheduler reads online nodes by joining this table to `auth.identities` for the contributor's Discord id.
+
+## The chunk that is never in the database
+
+Notice what is missing: there is no `public.chunks` table. A job is split into chunks, chunks are claimed by nodes, partial results accumulate, claims go stale and get re-enqueued, and **none of that touches Postgres**. The entire in-flight picture lives in the sentinel's process memory, one `JobRuntime` per active job:
+
+{/* docref struct database-job-runtime */}
+
+Every field there is volatile process state. The `in_flight` claims, the `pending_reclaims` queue, the strategy's partial aggregates: all of it lives in this struct and nowhere else. The database sees only the two endpoints of a job, the `pending` insert and the `completed`/`failed` finalize. Everything between, `claim_batch`, `complete`, `reclaim_stale`, and the partial Welford aggregates, runs entirely in memory against this struct.
+
+This is the in-memory-runtime-store-vs-DB-of-record trade, taken deliberately. The hottest loop in the platform is the claim/complete/reclaim cycle: many jobs, each with many chunks, completing every few seconds. Routing that through Postgres would mean a write per claim, a write per completion, and a sweep query per minute, all on the connection that also carries `LISTEN/NOTIFY`. Keeping it in memory makes each of those operations a hash-map mutation instead of a round trip.
+
+The cost is durability. The runtime store is single-process and volatile: if the sentinel restarts, every in-flight job's chunk state is lost. The system handles this honestly rather than pretending otherwise. On boot the sentinel fails every job still marked `running` from the prior process and logs each as `restart_dropped`:
+
+{/* docref code database-restart-fail-running */}
+
+A job interrupted by a restart is not silently abandoned and is not magically resumed. It is failed cleanly, and the user can resubmit. That is the right shape for the trade: the database is the source of truth for what a job _was_ and what it _finally produced_, and the in-memory store is the source of truth only for what is happening _right now_. The two never disagree about a completed job, because a job only becomes `completed` in Postgres after the runtime has finalized it.
+
+A second consequence is that the sentinel is, for in-flight work, a single point of failure with no horizontal scaling. There is one runtime store, in one process. For the current scale that is acceptable, and it is why the sentinel's Fly app keeps `min_machines_running = 1` with auto-stop off (see [deployment](/dev/bible/distribution/deployment)). If that ceiling is ever a problem, the honest fix is to move the runtime store to a shared backing store, not to add a second sentinel against the same in-memory state.

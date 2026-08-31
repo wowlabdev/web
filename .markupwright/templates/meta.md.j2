@@ -1,0 +1,17 @@
+{% set title = name %}
+{% if display_name %}{% set title = display_name %}{% endif %}
+<p align="center">
+  <a href="https://github.com/wowlabdev/web">
+    <img alt="WoW Lab" src="https://wowlab.gg/logo.png" width="32" />
+  </a>
+  <br />
+  <strong>{{ title }}</strong>
+</p>
+
+---
+
+{% block content %}{% endblock %}
+
+---
+
+> Part of [WoW Lab](README.md)

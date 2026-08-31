@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "Supabase Auth email templates" %}
+{% block description %}
+Supabase Auth email templates authored with [react-email](https://react.email). Rendered to static HTML and deployed to the linked Supabase project through the Management API.
+{% endblock %}

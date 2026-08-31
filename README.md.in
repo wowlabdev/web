@@ -1,0 +1,50 @@
+{% extends "readme-root.md.j2" %}
+{% block heading %}
+<p align="center">
+  <a href="https://wowlab.gg">
+    <img alt="WoW Lab" src="https://wowlab.gg/logo.png" width="64" />
+  </a>
+</p>
+
+<p align="center">
+  Web applications and services for WoW Lab
+</p>
+
+<p align="center">
+  <a href="https://github.com/wowlabdev/web/actions/workflows/ci.yml"><img src="https://github.com/wowlabdev/web/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://wowlab.gg/go/discord"><img src="https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
+  <a href="https://wowlab.gg"><img src="https://img.shields.io/badge/website-wowlab.gg-blue" alt="Website" /></a>
+</p>
+
+---
+{% endblock %}
+{% block content %}
+This repository contains the WoW Lab website, application, Open Graph worker, shared frontend code, email templates, and Supabase Edge Functions.
+
+## Development
+
+Install Node.js 24 and Deno 2, then install the workspace dependencies:
+
+```console
+corepack enable
+pnpm install
+cp apps/landing/.env.local.example apps/landing/.env.local
+cp apps/studio/.env.local.example apps/studio/.env.local
+```
+
+Run Studio:
+
+```console
+pnpm dev
+```
+
+Studio runs at `app.localhost:3000`. Use `pnpm dev:landing` for Landing at `localhost:3001` or `pnpm dev:og` for the Open Graph worker.
+
+Replace the placeholder values in the local environment files for features that use those services.
+
+Use `pnpm check` for the full local gate. Generated Markdown comes from the adjacent `.md.in` files; run `pnpm docs:generate` after changing a source template or package metadata.
+
+## Structure
+
+{{ index_of("README.md", "apps", "packages", "supabase") }}
+{% endblock %}

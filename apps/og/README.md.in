@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "Open Graph image worker" %}
+{% block description %}
+Cloudflare Worker that renders Open Graph images for WoW Lab.
+{% endblock %}

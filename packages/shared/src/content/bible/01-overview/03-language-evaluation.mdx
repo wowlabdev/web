@@ -1,0 +1,57 @@
+---
+title: Language Evaluation
+description: Why Rust, what languages were evaluated, and the trade-offs involved
+nextSteps:
+  - 01-overview/04-rotation-language
+---
+
+Languages evaluated for the simulation engine and why each was considered and ultimately rejected or chosen. The key requirements: raw performance for tight simulation loops, WASM compilation for the browser-side engine, memory safety without garbage collection pauses, ergonomic type system for modeling game mechanics, ecosystem for async networking (the hosted pool).
+
+Why not C++ (memory safety, build system complexity, WASM story), why not Go (GC pauses in tight loops, no WASM at the time, less expressive type system), why not TypeScript/JavaScript (performance ceiling, no native compilation for nodes), why not Zig (ecosystem maturity, async story), why not Java/C# (GC, WASM story).
+
+Why Rust: zero-cost abstractions, trait system for spec polymorphism, fearless concurrency with Rayon, first-class WASM target via wasm-pack, LLVM as an embedded JIT compiler via inkwell, strong ecosystem (tokio, serde, prost), single language for engine + pool workers + sentinel + CLI, compile-time guarantees (no null pointers, no data races), performance parity with C/C++.
+
+<Figure id="language-decision-matrix">
+
+```mermaid
+flowchart TB
+
+    start[Language Selection] --> perf{Raw Performance?}
+
+    perf -->|Yes| tsjs[TypeScript / JS]
+    tsjs --> tsjs_fail["Fail: V8 overhead ceiling,\nno native compilation for pool workers"]
+
+    perf -->|Yes| go[Go]
+    perf -->|Yes| cpp[C++]
+    perf -->|Yes| zig[Zig]
+    perf -->|Yes| java[Java / C#]
+    perf -->|Yes| rust[Rust]
+
+    go --> gc{No GC Pauses?}
+    gc -->|Fail| go_fail["Fail: GC pauses in tight\nsimulation loops"]
+
+    java --> gc2{No GC Pauses?}
+    gc2 -->|Fail| java_fail["Fail: GC pauses,\npoor WASM story"]
+
+    cpp --> safety{Memory Safety?}
+    safety -->|Fail| cpp_fail["Fail: manual memory mgmt,\nbuild system complexity"]
+
+    zig --> eco{Mature Ecosystem?}
+    eco -->|Fail| zig_fail["Fail: ecosystem immaturity,\nweak async story"]
+
+    rust --> wasm{WASM Target?}
+    wasm -->|wasm-pack| jit{Embedded JIT?}
+    jit -->|LLVM via inkwell| types{Expressive Type System?}
+    types -->|Traits, enums, generics| async_net{Async Networking?}
+    async_net -->|tokio| concurrency{Safe Concurrency?}
+    concurrency -->|Rayon, Send/Sync| chosen[Rust Chosen]
+
+    classDef md-red fill:#ffdbdc,stroke:#e5484d
+    classDef md-green fill:#e6f6eb,stroke:#30a46c
+    class tsjs_fail,go_fail,java_fail,cpp_fail,zig_fail md-red
+    class chosen md-green
+```
+
+</Figure>
+
+The trade-offs accepted: steep learning curve, longer compilation times, borrow checker friction in graph-like game state, less hiring pool than mainstream languages.

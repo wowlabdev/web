@@ -1,0 +1,56 @@
+---
+title: Resources
+description: "The resource pool model: spending, gaining, waste tracking, and haste-scaled regeneration."
+nextSteps:
+  - 03-engine/08-stats
+---
+
+A resource is a pool with a current value, a maximum, and a regeneration rate: mana, energy, rage, combo points, and so on. The engine models each spec's primary and (optional) secondary resource as a `ResourceSlot` in the [DenseBuffer](/dev/bible/engine/rotation-compiler), and a cast spends from and gains into those slots as part of the [cast pipeline](/dev/bible/engine/cast-pipeline).
+
+## The slot
+
+A `ResourceSlot` is three numbers, `current`, `max`, and `regen_per_sec`, with two mutating operations:
+
+- `spend(amount) -> bool`: if `current < amount` it returns `false` and changes nothing; otherwise it subtracts and returns `true`. Spending is all-or-nothing, never partial.
+- `gain(amount) -> f64`: adds, clamps to `max`, and returns the wasted overflow, the amount that would have pushed `current` past `max`.
+
+That `gain` return value is the whole reason the engine can report wasted resource generation. It hands back what it could not fit instead of silently clamping:
+
+{/* docref fn resources-slot-gain */}
+
+The slot also exposes derived reads for rotations, `deficit`, `pct`, `deficit_pct`, and `time_to_max`, so a script can ask "am I close to capping" or "how long until full" without the engine recomputing anything.
+
+## Spending and gaining a cast
+
+When `process_cast` runs at `CastComplete`, it spends and gains resources through `process_resources`, called right after the cast telemetry is emitted. That handles the primary and secondary resource in one pass via `process_single_resource`, which does the same thing for each:
+
+- **Cost**: if `cost > 0`, spend it and emit a `Spend` event to the [telemetry sink](/dev/bible/engine/metrics).
+- **Gain**: if `gain > 0`, gain it and emit a `Gain { wasted }` event carrying the overflow from `ResourceSlot::gain`.
+
+The primary cost has two exceptions, both decided at the top of `process_resources`. The cost is zeroed when a cost-bypass aura is active, the mechanic behind "your next cast is free" buffs, or when the spell is a channel whose cost is paid per tick rather than up front. Otherwise it is the spell's flat `resource_cost`:
+
+{/* docref fn cast-pipeline-process-resources */}
+
+Whether a cast is even allowed to start is a separate, earlier check. `can_cast` runs at `on_player_ready` and includes a resource-cost gate. If the resource is short, the rotation evaluator computes a `resource_wait`, the time until enough primary resource regenerates, and the handler waits instead of casting. So `process_resources` at cast completion is the bookkeeping; the affordability decision already happened.
+
+## Regeneration
+
+Energy-style resources regenerate continuously, and the engine does this lazily rather than on a tick. `sync_resource` is called at the start of `on_player_ready` and brings the resource up to the current time in one step. It opens with a guard that makes the call idempotent within a timestamp: if `now <= last_sync` it returns immediately, so repeated reads at the same instant don't double-regenerate.
+
+{/* docref fn resources-sync-resource */}
+
+Past the guard the math is a single catch-up step:
+
+```
+elapsed_s = (now - last_sync) / 1000
+regen = regen_per_sec * haste_mult * elapsed_s
+current = min(current + regen, max)
+```
+
+Computing regeneration on demand, only when the rotation is about to make a decision, instead of scheduling a stream of tiny regen events keeps the [event queue](/dev/bible/engine/event-system) small. There is no benefit to ticking energy 10 times a second when nothing reads it in between.
+
+The `haste_mult` term is the resource-system equivalent of hasted attack speed. When the spec's resource is haste-scaled (`state.config.haste_regen`), the engine reads the live haste from the player's actor-revision `BuffTotals` cache and scales regeneration by `1 + haste_pct/100`. Aura dependency dispatch refreshes the effective per-second rate only when a relevant aura changes, so the rotation's `regen` and `time_to_max` reads stay current without rescanning unrelated auras. Specs whose regen tracks a specific buff (BM Hunter's Frenzy, say) reach the same math through one shared `systems::resources::set_regen_from_haste` helper instead of re-deriving `base_regen * (1 + haste/100)` inside each hook.
+
+## Telemetry
+
+Every spend and gain pushes a `ResourceEvent` carrying the kind (`Spend` or `Gain { wasted }`), the resource type id, the amount, and the post-operation current and max. The telemetry accumulator folds those per-iteration events into per-resource totals, gained, spent, and wasted, which is how the results UI can show, for example, how much energy a rotation threw away by gaining at cap. The `wasted` figure is only meaningful because `ResourceSlot::gain` returns the overflow rather than silently clamping.

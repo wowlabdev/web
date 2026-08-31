@@ -1,0 +1,41 @@
+{
+  "name": "@apps/tail",
+  "version": "0.1.0",
+  "description": "Cloudflare error collector for WoW Lab",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#cloudflare": "./scripts/cloudflare.mts",
+    "#collect": "./src/collect.ts",
+    "#redact": "./src/redact.ts",
+    "#schema": "./src/schema.ts",
+    "#types": "./src/types.ts"
+  },
+  "scripts": {
+    "build": "wrangler deploy --dry-run --env= --outdir dist",
+    "dev": "wrangler dev",
+    "errors": "zx scripts/errors.mts",
+    "format": "prettier --write --ignore-path ../../.prettierignore .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "ncu": "ncu -u",
+    "test": "vitest run && zx scripts/errors.mts --help",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@wowlab/shared": "workspace:*",
+    "flare-redact": "catalog:",
+    "jsonc-parser": "catalog:",
+    "stacktrace-parser": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260830.1",
+    "@types/node": "catalog:",
+    "@wowlab/eslint-config": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:",
+    "zx": "catalog:"
+  }
+}

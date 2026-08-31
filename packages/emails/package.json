@@ -1,0 +1,33 @@
+{
+  "name": "@wowlab/emails",
+  "version": "0.1.0",
+  "description": "Supabase Auth email templates for WoW Lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "zx scripts/deploy.mts",
+    "dev": "email dev --dir emails --port 3001",
+    "export": "email export --dir emails --outDir out --pretty",
+    "format": "prettier --write --ignore-path ../../.prettierignore .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "ncu": "ncu -u",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-email": "catalog:"
+  },
+  "devDependencies": {
+    "@react-email/ui": "catalog:",
+    "@types/fs-extra": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@wowlab/eslint-config": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "zx": "catalog:"
+  }
+}

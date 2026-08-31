@@ -1,0 +1,45 @@
+---
+title: Stats
+description: Rating-to-percent conversion via the game's own DBC diminishing-returns curves, and the recompute step.
+nextSteps:
+  - 03-engine/09-spec-handlers
+---
+
+A character's gear gives ratings, a flat number of crit rating, haste rating, and so on. Combat math wants percentages. Converting one to the other is not a constant: WoW applies diminishing returns to secondary stats, so the hundredth percent of crit costs more rating than the first. The engine does not approximate that curve; it reads the game's own diminishing-returns curves out of the DBC data and interpolates them.
+
+## Rating to percent
+
+The conversion is `rating_to_percent`:
+
+{/* docref fn stats-rating-to-percent */}
+
+The shape is two steps. The raw percent is `rating / divisor`, where `divisor` is the level-coupled rating-per-1% value pulled from the game's own CombatRatings GameTable (`ResolvedGameTables::combat_rating_divisor`) for this stat at this character level, the linear baseline before diminishing returns. The `interpolate_sorted` step then bends that raw percent through the relevant DBC curve to get the effective percent. The curve is keyed by rating type:
+
+- **Secondary** stats (crit, haste, mastery, versatility) use `SECONDARY_DR_CURVE_ID`, curve 21024.
+- **Tertiary** stats (leech, speed, avoidance) use `TERTIARY_DR_CURVE_ID`, curve 21025.
+
+`dr_curve_id` does that mapping. The curves themselves are `ResolvedCurves`, piecewise-linear point sets resolved from the game data scaling tables at bootstrap; `curve_points(curve_id)` hands back the point set and `interpolate_sorted` (a free function in `engine-domain::dbc`) walks it, clamped at both endpoints. This matters for honesty about the model: the engine is **not** applying a flat "30% cap" or any hand-tuned diminishing-returns approximation. It interpolates the same curve the game uses, so the DR behaviour is correct by construction as long as the curve data is current.
+
+There is no silent fallback. `rating_to_percent` returns a `Result`, and a missing curve (or a missing divisor row) is a hard error, `StatsError::MissingCurve` / `StatsError::MissingCombatRating`, not a degraded "DR off" mode. Because this runs in the gear-resolution setup path, a missing curve that silently produced an un-diminished, uncapped percent would mean wrong DPS; failing loud is the deliberate choice.
+
+## Recompute
+
+`recompute` turns the raw primary stats and ratings into the combat-ready numbers the [damage formula](/dev/bible/engine/combat-formulas) reads:
+
+{/* docref fn stats-recompute */}
+
+Everything is in **percent points** (`25.0` means 25%, never a `0..=1` fraction), and `recompute` itself returns a `Result`: any missing curve or divisor surfaces as a `StatsError` rather than a silently-wrong stat. What it produces:
+
+- **Attack power and spell power** are both set to the spec's primary attribute value. The spec's primary attribute, strength, agility, or intellect, comes from `primary_stat_for_spec`.
+- **Crit** = `BASE_CRIT_CHANCE * 100 + crit_pct`, the innate 5% plus the rating-derived crit percent, both in percent points.
+- **Haste** = the rating-derived haste percent.
+- **Mastery** = `mastery_pct * mastery_coeff`. The per-spec coefficient is what translates "mastery percent" into the spec's actual mastery effect; the manifest supplies it.
+- **Versatility** = the rating-derived versatility percent.
+
+Every secondary above goes through `rating_to_percent`, so the DR curve is applied uniformly. Attack power and spell power being identical to the primary attribute is a simplification. It skips weapon DPS and the various AP-per-stat conversions, but the weapon contribution to physical hits is added separately in the damage chain via the weapon roll, so the AP value here is the stat-scaling portion only.
+
+`CombatStats` is the output struct, re-exported from `engine-ports`. Alongside the secondaries it carries a `crit_damage_bonus` field (percent points on top of the base 2x crit), so its `crit_multiplier()` accessor is `2.0 + crit_damage_bonus/100` rather than a hardcoded constant. Those resolved stats are what the damage chain reads when it computes a hit. There is also a `default_stats()` used for introspection and quick smoke tests, AP/SP 15000, crit 25, haste 15, mastery 40, versatility 5, so a spec can be built and introspected without any gear resolved.
+
+## Where the curves come from
+
+The DR curves are part of [game data](/dev/bible/game-data/data-resolution): the `curve_points` scaling table is fetched alongside item scaling, folded into `ResolvedCurves` via `from_scaling` (which sorts each curve's points by x), and carried into the sim as part of the resolved data. Because the same curve data drives both gear scaling and stat conversion, the rating-to-percent numbers stay consistent with how the game would scale the gear that produced those ratings.

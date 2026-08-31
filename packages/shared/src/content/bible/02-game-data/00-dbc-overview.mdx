@@ -1,0 +1,52 @@
+---
+title: DBC Overview
+description: What WoW's client database (DBC) files are, how I load them from CSV, and the DbcData lookup tables the rest of the data layer is built on
+nextSteps:
+  - 02-game-data/01-spell-data
+---
+
+Everything the engine knows about a spell, an item, or a talent tree ultimately comes from World of Warcraft's own client database. The client ships its game data as a large set of tables, historically called <Term id="dbc">DBC</Term> files, and every number I simulate (a cooldown, a coefficient, an aura duration) is a column in one of those tables. The simplest way to think about this whole section is: the game tells us the numbers, and the data layer's only job is to find them, reshape them, and hand them to the engine.
+
+I do not parse the binary client files directly. By the time data reaches this repository it has already been extracted to CSV, one file per table. The loader reads those CSVs into a single in-memory bundle, and the transforms turn that bundle into the flat types the engine consumes. This page covers that first hop: CSV to bundle. The pages that follow cover the reshaping, and [Data Resolution](/dev/bible/game-data/data-resolution) covers how the bundle, a Postgres mirror, and a browser cache all end up behind one trait.
+
+## The bundle: `DbcData`
+
+The whole CSV side of the data layer collapses into one struct. `DbcData` is a flat record of roughly 130 lookup tables: `spell_name`, `spell`, `spell_misc`, `spell_effect`, `spell_power`, `chr_specialization`, `trait_node`, `item`, `item_sparse`, `item_bonus`, `curve`, `curve_point`, `rand_prop_points`, `power_type`, `expected_stat`, and so on. Each one is an `IntMap<i32, Row>`, or a grouped `IntMap<i32, Vec<Row>>` for one-to-many relations, keyed by the row's primary id or a foreign key.
+
+There is nothing clever about the bundle. It is deliberately a dumb container: load once, look up by id, never mutate. All of the interpretation, joining `spell` to `spell_misc` to `spell_effect`, deciding which effect carries the damage coefficient, happens later in the transform layer, never in the loader.
+
+## Loading from CSV
+
+`DbcData::load_all` reads each table from `{data_dir}/data/tables/{Table}.csv`, so `Spell.csv`, `SpellName.csv`, and `ItemSparse.csv` all live side by side under one directory tree:
+
+{/* docref fn dbc-overview-load-all */}
+
+The function is one long sequence of per-table load calls. There is no schema registry and no reflection driving it, just an explicit list.
+
+The CSV directory is located through the `WOWLAB_DATA_DIR` environment variable. The engine CLI reads it and falls back to `{HOME}/Source/wowlab-data`, and `forge` does the same against its own `default_data_dir`. Rotations sit alongside the tables at `{data_dir}/rotations/{id}`.
+
+One design choice worth naming, because it is easy to misread as a bug: a missing CSV file is **not** an error. `read_csv_bytes` returns `None` for a file that is not present, and the loader turns that into an empty `IntMap`:
+
+{/* docref fn dbc-overview-read-csv-bytes */}
+
+So pointing the loader at an incomplete or empty data directory yields a bundle full of empty tables rather than a hard failure. I chose this because partial data sets are useful during development and because the transforms downstream already tolerate missing rows. The catch is that a typo in the data directory surfaces as "spell not found" much later, not as "directory missing" up front.
+
+Under the hood the loader uses three generic readers, parameterized by small marker traits derived on the row structs:
+
+<BibleTable id="gamedata-dbc-loaders">
+
+| Loader           | Keyed by             | Shape                                           |
+| ---------------- | -------------------- | ----------------------------------------------- |
+| `load_by_id`     | primary `ID` column  | `IntMap<i32, Row>`                              |
+| `load_by_fk`     | a foreign-key column | `IntMap<i32, Vec<Row>>` (two-pass count + fill) |
+| `load_one_by_fk` | a foreign-key column | `IntMap<i32, Row>` (first row wins)             |
+
+</BibleTable>
+
+The row structs themselves sit next to the loader, and their field names match the CSV column headers exactly, so deserialization is a straight serde mapping with no manual column indexing.
+
+## Where the bundle goes
+
+`DbcData` is the input to the transform layer and, by extension, to the local resolver. `LocalCsvResolver` loads it lazily on first access and caches the `Arc<DbcData>`. The CSV path is the source of truth for the local resolver and, at snapshot time, for the rows that get written into Supabase.
+
+The remaining pages in this section follow that data forward: first the spell table, the largest and most important one, then talent trees, items and scaling, and the tooltip parser, before the two resolution pages tie the CSV path, the Postgres path, and the browser path together.

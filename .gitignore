@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment and credentials
+.env*
+!.env.example
+!apps/*/.env.cloudflare
+!apps/*/.env.cloudflare.dev
+!apps/*/.env.local.example
+*.pem
+.dev.vars
+.dev.vars.*
+
+# App builds and generated content
+.intlayer/
+.next/
+.open-next/
+.velite/
+dist/
+dist-*/
+out/
+next-env.d.ts
+*.tsbuildinfo
+apps/*/cloudflare-env.d.ts
+apps/*/public/blog/feed.xml
+apps/*/public/llms.txt
+apps/*/public/llms-full.txt
+apps/*/public/static/
+apps/studio/public/wasm/*.wasm
+
+# Tool state
+.cache/
+.eslintcache
+.wrangler/
+coverage/
+test-results/
+*.log
+pnpm-debug.log*
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# Local editor and operating system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local agent configuration
+.claude/*
+!.claude/skills/
+.mcp.json
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+tmp/
+
+# Wasm packages are checked in until they are published to npm
+*.tgz
+!vendor/wasm/*.tgz

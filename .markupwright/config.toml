@@ -1,0 +1,67 @@
+version = 1
+
+[workspace]
+name = "WoW Lab Web"
+description = "Web applications and services for WoW Lab"
+domain = "node"
+
+[render]
+templates = ".markupwright/templates"
+header = "header.md.j2"
+navigation = "README.md"
+source-suffix = ".in"
+
+[domains.node]
+manifests = [
+  "package.json",
+  "apps/*/package.json",
+  "packages/*/package.json",
+  "supabase/package.json",
+]
+source-documentation = true
+
+[domains.frontmatter.skills]
+include = [".claude/skills/*/SKILL.md"]
+fields = ["name", "description"]
+sort-by = "name"
+scope = "root"
+
+[domains.github-workflows.github]
+include = [".github/workflows/*.yml", ".github/workflows/*.yaml"]
+scope = "root"
+
+[directories.apps]
+name = "apps"
+description = "Deployable web applications"
+
+[directories.".github/scripts"]
+name = "CI scripts"
+description = "Linted workflow and deployment commands"
+
+[directories.packages]
+name = "packages"
+description = "Shared web packages"
+
+[directories."packages/shared/src/i18n"]
+name = "Translations"
+description = "User-facing text and locale workflow"
+
+[directories.supabase]
+name = "supabase"
+description = "Edge Functions and local Supabase configuration"
+
+[directories.vendor]
+name = "vendor"
+description = "Pinned external build artifacts"
+
+[[documents]]
+include = ["AGENTS.md.in", "CLAUDE.md.in"]
+template = "instructions-root.md.j2"
+
+[[documents]]
+include = [".github/scripts/README.md.in"]
+template = "readme-directory.md.j2"
+
+[[documents]]
+include = ["**/*.md.in"]
+template = "document.md.j2"

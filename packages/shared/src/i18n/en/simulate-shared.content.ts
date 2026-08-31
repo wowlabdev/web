@@ -1,0 +1,48 @@
+import { insert } from "intlayer";
+
+import { en } from "../i18n";
+
+// prettier-ignore
+export default en("simulateShared", {
+  // apps/studio/src/components/core/simulate/bags/bags-configure-step.tsx, apps/studio/src/components/core/simulate/bags/bags-inventory-step.tsx, apps/studio/src/components/core/simulate/drops/drops-configure-step.tsx +17 more
+  "back": "Back",
+  "bagBadge": "Bag",
+  "cannotDetectSpec": "Could not detect spec from talent string.",
+  "characterLevel": insert("Level {{level}}"),
+  "empty": "Empty",
+  "equippedCount": insert("{{count}} equipped"),
+  "failedToParseProfile": "Failed to parse profile.",
+  "headerItem": "Item",
+  "headerSource": "Source",
+  "inBagsCount": insert("{{count}} in bags"),
+  "includeWeeklyRewards": "Include Weekly Rewards",
+  "indexBagsDescription": "Search the gear sitting in your bags for the best set. Great for mid-raid swaps.",
+  "indexBagsTitle": "Best in Bags",
+  "indexDropsDescription": "Score a loot drop against your active build before you pass on it.",
+  "indexDropsTitle": "Drop Optimizer",
+  "indexIntro": "Three tools, same engine. Pick the one that fits what you are trying to decide. Everything runs in your browser unless you boost it onto the pool.",
+  "indexQuickDescription": "Paste a SimC profile, hit run, get a DPS number. The fastest path to a sanity check.",
+  "indexQuickTitle": "Quick Sim",
+  "itemLevelShort": insert("iLvl {{level}}"),
+  "likelihood": "Likelihood",
+  "next": "Next",
+  "noBagItems": "No bag items found in your SimC profile. Make sure to export with the addon's \"bags\" option enabled.",
+  "selectAll": "Select All",
+  "selectDeselectAll": "Deselect All",
+  "simcInputLabel": "SimC Profile",
+  "simcInputPlaceholder": "Paste your SimC profile here...",
+  "specNameFallback": insert("Spec {{id}}"),
+  "specNotSupported": insert("Spec {{id}} is not supported by this engine build."),
+  "statCombinationsTitle": "Combinations",
+  "statCombinationsTrend": insert("across {{count}} slots"),
+  "statSelectedItemsAvailable": insert("{{count}} available"),
+  "statSelectedItemsTitle": "Selected Items",
+  "stepConfigure": "Configure",
+  "stepImport": "Import",
+  "stepInventory": "Inventory",
+  "stepSources": "Sources",
+  "tabGrid": "Grid",
+  "tabPaperdoll": "Paperdoll",
+  "weeklyBadge": "Weekly",
+  "weeklyCount": insert("{{count}} weekly"),
+});

@@ -1,0 +1,51 @@
+---
+title: Design Principles
+description: Core architectural principles guiding system design
+nextSteps:
+  - 02-engine/00-simulation-core
+  - 03-networking/00-realtime-infrastructure
+---
+
+# Design Principles
+
+These principles guide how WoW Lab is built.
+
+## Free engine, always
+
+The full engine runs in the browser via WebAssembly. No sign-up needed, no setup, nothing to install. Paid plans add hosted pool access for speed, but the engine itself is the same binary either way.
+
+## Stateless services
+
+Sentinel and Beacon instances are stateless and interchangeable. Any Sentinel can handle any request. Any pool worker can process any chunk.
+
+<Alert title="Implication">
+  This enables horizontal scaling without session affinity. Load balancers can
+  route requests to any available instance.
+</Alert>
+
+## Centrifugo owns connections
+
+Centrifugo manages all WebSocket connections:
+
+- Connection lifecycle and reconnection
+- Presence tracking and subscription management
+- Message routing and delivery guarantees
+- Horizontal scaling across multiple instances
+
+Services publish messages to Centrifugo rather than maintaining direct connections to clients.
+
+## Idempotency everywhere
+
+Every operation must be safe to retry:
+
+- Chunk processing is deterministic given the same seed
+- Progress updates use last-write-wins semantics
+- Job state transitions are guarded by version checks
+- Network failures never leave the system in an inconsistent state
+
+## Eventual persistence
+
+- Realtime updates flow through Centrifugo
+- Supabase stores durable records
+- User-facing data is eventually consistent within seconds
+- Simulation results are batched for efficient storage

@@ -1,0 +1,40 @@
+---
+title: Spell Descriptions
+description: The tooltip lexer, parser, and renderer that turn WoW's templated description strings into readable text, and an honest note on what this is and is not used for
+nextSteps:
+  - 02-game-data/05-data-resolution
+---
+
+The text in a WoW tooltip is not plain text. A description like "Deals $s1 Fire damage over $d" is a small template language: `$s1`means "effect 1's value,"`$d`means "duration," and there are conditionals, color codes, pluralization, and cross-spell references besides. Showing a readable tooltip means parsing that template and substituting the real numbers. This is a self-contained sub-parser in the data layer, and I want to be upfront about its scope: it exists to render tooltips for the UI, not to feed the simulation. The engine reads coefficients straight from`SpellDataFlat`; it never goes through the description text.
+
+The implementation lives under `crates/common/src/parsers/spell_desc/` and is a textbook three-stage pipeline: lex, parse, render, with a fourth analysis stage layered on top.
+
+## Lex
+
+`lex` and `tokenize` turn a description string into a stream of `Token` values. The lexer is built on the `logos` crate, so the token grammar is regex-driven rather than hand-rolled: literal text, `$`-variables, color codes, and the braces that open expression blocks each get their own token. A second lexer, `lex_expr`, handles the expression sub-language inside `${…}` blocks.
+
+## Parse
+
+`parse` consumes the token stream and produces a typed AST. It returns a `ParseResult` that carries the tree and a list of errors side by side:
+
+{/* docref struct spell-desc-parse-result */}
+
+Errors are collected rather than thrown, so a malformed description still yields a best-effort tree. The AST itself is genuinely rich. The node enum covers plain text, color codes, and a whole family of variable nodes, plus pluralization, gender, conditionals, and a small arithmetic expression grammar:
+
+{/* docref enum spell-desc-node-enum */}
+
+Each variant fans out further. The variable node alone splits into effect values, spell-level values, player state, cross-spell references, and enchant variables, and the expression grammar has binary and unary operators and function calls. The breadth is dictated by the source format. WoW's description strings really do use all of it, not by ambition on my part.
+
+## Render
+
+Rendering walks the AST and substitutes values, but it does not know any values itself. Instead `render_with_resolver` takes a resolver and asks it for each piece of data it needs. The resolver is split into three traits, `EffectValueResolver`, `PlayerStateResolver`, and `SpellTextResolver`, composed into one super-trait:
+
+{/* docref code spell-desc-resolver-trait */}
+
+A blanket impl means anything implementing all three sub-traits qualifies for free. The crate ships a `NullResolver` that resolves nothing and a `TestResolver` for tests. This is the same dependency-inversion shape as the rest of the data layer: the renderer depends on a trait, and the caller supplies the backend that actually has the numbers.
+
+## Analyze
+
+There is one extra entry point. `analyze_dependencies` walks a parsed description to find which other spells and effects it references, without rendering it. That is what lets a tooltip pre-fetch the cross-referenced spells it will need before it renders. The whole pipeline, tokenize and render and analyze, is also exported across the WASM boundary so the browser can render tooltips client-side. Those bindings are the `wasm_*` functions in the module's wasm submodule.
+
+I am keeping this page short on purpose. The description language is large and has many corner cases, but it sits to the side of the simulation data flow. If you are tracing how a number reaches the engine, the relevant path is the flat spell and item types of the previous pages, not the tooltip parser. The next page returns to that main line: how all four data sources end up behind one resolver trait.

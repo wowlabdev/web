@@ -1,0 +1,7 @@
+<% if (it.kind === "rotation") { -%>
+Emit a full Rotation object: version, name, variables, actions, and lists.
+<% } else if (it.kind === "list") { -%>
+Emit a JSON array of Action objects.
+<% } else { -%>
+Emit a single Condition object.
+<% } -%>

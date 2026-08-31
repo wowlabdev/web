@@ -1,0 +1,86 @@
+---
+title: Privacy
+description: How WoW Lab handles your data, and which third-party services see what.
+---
+
+Short version: an account is required. We collect what we need to sign you in, save your work, run sims, and bill you if you pay. We don't sell your data and we don't run ads.
+
+## What we collect
+
+| Data                                          | Source                                 | Why                                             |
+| --------------------------------------------- | -------------------------------------- | ----------------------------------------------- |
+| Email and basic profile                       | Discord or GitHub OAuth                | Sign-in and identifying your account            |
+| Handle and optional avatar URL                | You set these in WoW Lab               | Displaying your profile and shared content      |
+| Rotations, profiles, sim history              | Your activity in WoW Lab               | Saving your work and showing it back to you     |
+| Billing details                               | Paddle, if you subscribe or buy boosts | Processing payment and tax                      |
+| IP address and request logs                   | Hosting and database infrastructure    | Security, abuse prevention, basic operations    |
+| Page views, referrer, country, device/browser | Cloudflare Web Analytics               | Knowing what works and what is slow             |
+| Sanitized server error summaries              | Cloudflare Workers                     | Debugging failures and grouping repeated errors |
+
+## Where the work happens
+
+The simulator itself is WebAssembly running in your tab, so the math executes on your CPU. The job that wraps it (your profile, gear, and results) is created and stored on our backend so it shows up in your sim history. Paid plans can also run sims server-side on our shared pool.
+
+## Third-party services
+
+WoW Lab is built on services that each handle one piece of the job. They each have their own privacy policy and their own sub-processors. The links go straight to the source so you can read the details.
+
+| Service                                                                                  | What it does              | What they see                                                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Bunny.net](https://bunny.net/privacy/)                                                  | Video hosting             | IP and request data when you load a video                                                                                                                                                                                                                                                             |
+| [Cloudflare](https://www.cloudflare.com/privacypolicy/)                                  | Hosting, CDN, analytics   | Every request hits Cloudflare's edge, where the app runs on Cloudflare Workers. Their [Web Analytics](https://www.cloudflare.com/web-analytics/) is cookieless, doesn't fingerprint you, and doesn't track you across sites. Sanitized server error summaries are stored in Workers Analytics Engine. |
+| [CurseForge](https://legal.overwolf.com/docs/overwolf/platform/platform-privacy-policy/) | Addon hosting and install | The WoW Lab addon is hosted on CurseForge (operated by Overwolf). If you click install or download, you land on curseforge.com or the CurseForge desktop app, and they see your IP and request data. We don't share account info with them.                                                           |
+| [Discord](https://discord.com/privacy)                                                   | OAuth sign-in option      | If you sign in with Discord, they share your email, username, ID, and avatar with us. Discord also knows you signed in to WoW Lab.                                                                                                                                                                    |
+| [Fly.io](https://fly.io/legal/privacy-policy/)                                           | Backend services          | Hosts our job scheduler, realtime websocket layer, message broker, and internal networking. Sees job metadata (which sims are queued, who they belong to), not the sim contents themselves.                                                                                                           |
+| [GitHub](https://docs.github.com/site-policy/privacy-policies/github-privacy-statement)  | OAuth sign-in option      | If you sign in with GitHub, they share your email and public profile with us. GitHub also knows you signed in to WoW Lab.                                                                                                                                                                             |
+| [Grafana Cloud](https://grafana.com/legal/privacy-policy/)                               | Backend metrics           | Operational metrics from our backend (queue depth, sim throughput, error rates). No user identifiers in labels, so they don't see who ran what.                                                                                                                                                       |
+| [Latitude.sh](https://www.latitude.sh/legal/privacy)                                     | Sim compute pool          | Bare-metal servers that execute sims for paid plans. Your sim job inputs (profile, gear, rotation) run on these machines until the result is returned.                                                                                                                                                |
+| [Paddle](https://www.paddle.com/legal/privacy)                                           | Payments and tax          | Your billing details when you check out. Paddle is the merchant of record, so they handle card data, invoices, and tax.                                                                                                                                                                               |
+| [Resend](https://resend.com/legal/privacy-policy)                                        | Transactional email       | Your email address and the contents of any account-related email we send (sign-in, billing, account changes)                                                                                                                                                                                          |
+| [Supabase](https://supabase.com/privacy)                                                 | Auth and database         | Your account, your saved data, IP for security logs                                                                                                                                                                                                                                                   |
+
+## How we use data
+
+To sign you in, save your work, run sims, take payments, and protect the service from abuse. That's it.
+
+## Sharing
+
+We don't sell or rent your data and we don't hand it to advertisers. Each service in the table above gets only what it needs to do its job. We respond to lawful requests from authorities when legally required.
+
+Anything you publish (a shared rotation, for example) is public on purpose. Your handle and avatar appear next to it.
+
+## Where data lives
+
+Our database (Supabase) is in London. Our backend services on Fly.io run in London. The sim compute pool on Latitude.sh runs on bare-metal servers in multiple regions; sims route to the closest one. Cloudflare hosts and serves traffic from a global edge network. Paddle and Bunny.net process data internationally. Transfers out of the EEA rely on standard contractual clauses with each provider.
+
+## Security
+
+Traffic is served over HTTPS. We don't store passwords because sign-in goes through [Discord](https://discord.com/privacy) or [GitHub](https://docs.github.com/site-policy/privacy-policies/github-privacy-statement). Data at rest is encrypted by our infrastructure providers.
+
+## Cookies and local storage
+
+Supabase auth uses cookies to keep you signed in. They stay set for up to 400 days (the browser cap) and refresh every time you use the site. Sign out and they're cleared. Paddle uses cookies on the checkout to process your payment. Cloudflare Web Analytics is cookieless. We also keep small client-side caches (React Query and IndexedDB) so the app feels fast and your work persists across reloads.
+
+## Retention and deletion
+
+Sim history is kept for 30 days on the free plan and 2 years on Individual and Guild plans. Rotations and profiles persist until you delete them.
+
+Request logs and IP addresses live in our hosting providers' systems and are dropped on a fixed schedule: Cloudflare deletes edge access logs within 4 hours, 7 days at Supabase, 30 days at Fly.io. We don't keep a separate request-log archive on our side. Database backups are handled by Supabase under their plan policy and roll off automatically.
+
+Sanitized server error summaries are stored in Cloudflare Workers Analytics Engine for three months. They include an error fingerprint, Worker name, route path, error type, and redacted message and source locations. Request headers, query strings, and full URLs are not stored in this archive.
+
+Paddle holds card and payment method details on their end. We never store cards. After you cancel or delete your account, what Paddle retains is governed by [Paddle's policy](https://www.paddle.com/legal/privacy), not ours.
+
+Delete your account any time in [account settings](https://app.wowlab.gg/account/settings). This is irreversible and removes your WoW Lab account and metadata immediately. Backups and operational logs at Supabase, Cloudflare, or Paddle may retain minimal data under their policies for a limited period. Public content you created (like shared rotations) becomes inaccessible after deletion. Forks of your rotation that other users created are independent copies and stay on their accounts.
+
+## Your rights
+
+Depending on where you live (EEA, UK, California, and others) you may have the right to access, correct, export, or delete your data. [Get in touch](mailto:privacy@wowlab.gg) and we'll sort it out.
+
+## Updates
+
+We may update this policy. Material changes show in the update date above.
+
+## Contact
+
+Privacy questions, data requests, and rights requests go to [privacy@wowlab.gg](mailto:privacy@wowlab.gg). For everything else, see the [contact page](/contact). WoW Lab isn't aimed at users under 13, so if a child has signed up, email us and we'll remove the account.

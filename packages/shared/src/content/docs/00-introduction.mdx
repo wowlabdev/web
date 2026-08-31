@@ -1,0 +1,30 @@
+---
+title: Introduction
+description: A combat simulation platform for World of Warcraft
+nextSteps:
+  - 99-meta/00-mdx-components
+---
+
+# Introduction
+
+WoW Lab is a combat simulator for World of Warcraft. The engine runs in your browser via WebAssembly for free, and paid plans get slots on a hosted pool for faster runs.
+
+## Overview
+
+Three main pieces:
+
+1. **Simulation Engine** - A deterministic Rust engine compiled to WebAssembly for the browser and native for the hosted pool
+2. **Realtime Layer** - Centrifugo for WebSocket messaging, Supabase Postgres for jobs and results
+3. **Portal** - A Next.js web application for character planning, rotation editing, and result analysis
+
+## Documentation Structure
+
+This documentation covers the technical architecture and implementation details of the WoW Lab platform:
+
+<CardGrid>
+  <Card title="Architecture">System design and component overview</Card>
+  <Card title="Engine">Simulation mechanics and WASM integration</Card>
+  <Card title="Networking">Realtime infrastructure and protocols</Card>
+</CardGrid>
+
+![Overview](./images/overview.jpg)

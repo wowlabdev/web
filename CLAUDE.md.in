@@ -1,0 +1,39 @@
+{% extends "instructions-root.md.j2" %}
+{% set display_name = "web" %}
+{% block content %}
+
+## Rules
+
+1. Read the closest `CLAUDE.md` before changing a package or app.
+2. Run `tree` on the containing directory before adding files and follow its existing domain structure.
+3. Load the relevant skill before changing UI, translations, Wasm loading, or repository-wide standards.
+4. Keep app-specific scripts with their app. Put repository-wide automation in `packages/scripts`.
+5. Remove replaced code and update every caller. Do not leave compatibility wrappers or commented-out implementations.
+6. Do not edit generated Markdown directly. Edit the adjacent `.md.in` source and run `pnpm docs:generate`.
+
+## Commands
+
+```console
+pnpm build
+pnpm check
+pnpm check:i18n
+pnpm dev
+pnpm docs:generate
+pnpm errors dev --hours 6
+pnpm errors prod --hours 6
+pnpm lint
+pnpm test
+pnpm typecheck
+```
+
+## Boundaries
+
+- `apps/landing` is the public Next.js site.
+- `apps/og` renders and caches Open Graph images.
+- `apps/studio` is the authenticated Next.js application.
+- `apps/tail` collects and queries structured Cloudflare errors.
+- `packages/emails` owns Supabase Auth email templates and deployment.
+- `packages/scripts` owns repository-wide validation and deployment tooling.
+- `packages/shared` owns shared UI, content, translations, and library code.
+- `supabase` owns the Edge Functions used by the web applications.
+{% endblock %}

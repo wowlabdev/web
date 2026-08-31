@@ -1,0 +1,63 @@
+---
+title: Content System
+description: "How the bible and docs are authored and rendered: the velite MDX pipeline, the number-prefix collection rule, and the custom Figure / Term / Cite / BibleTable components."
+nextSteps:
+  - 06-compendium/01-death-knight
+---
+
+This page documents the system that renders this page. The bible and the docs are MDX files in `packages/shared/src/content`, compiled at build time by [velite](https://velite.js.org) into a typed content collection, then rendered through a set of custom MDX components: the `<Figure>`, `<Term>`, `<Cite>`, and `<BibleTable>` you see throughout. The content is shared source: both the studio and landing apps point velite at the same tree.
+
+The mental model is three stages: velite parses the MDX and validates frontmatter; a content-collection helper turns the flat list of entries into a navigable, ordered tree; and the App Router renders each entry with the custom components.
+
+## velite: parse and validate
+
+The studio's `velite.config.ts` declares two collections, `bible` and `docs`, both reading from the same shared content root. The `bible` collection's schema requires `title` and `description`, optionally `nextSteps`, and derives `body` (compiled MDX), `toc`, a git-commit `updatedAt`, and a `sortKey` from the file path:
+
+{/* docref code content-system-bible-collection */}
+
+The `updatedAt` field is computed by shelling out to `git log -1 --format=%cd` per file, so the "last updated" you see is the real commit date, not the build date. Code blocks are highlighted at build time with `rehype-pretty-code` and Shiki, and a small rehype plugin stashes the raw source on each `<pre>` so the copy button has something to copy.
+
+## The number-prefix rule
+
+Files and folders are numbered, e.g. `05-portal/03-simulation-ui.mdx`. That prefix is load-bearing, not cosmetic. The content-collection builder parses the leading `NN-` to derive ordering, and it refuses anything without it:
+
+{/* docref code content-system-extract-order-guard */}
+
+The prefix is then stripped to form the public slug, so the URL is `/dev/bible/portal/simulation-ui`, not `.../05-portal/03-...`. This is why every cross-link in this bible uses the stripped path while `nextSteps` frontmatter uses the numbered one. They address the same page through two layers of the pipeline.
+
+`createContentCollection` also builds the section index, resolves adjacent prev/next pages, and resolves the `nextSteps` numbered paths back to navigable items. The studio binds the velite output into this helper in `apps/studio/src/lib/content/bible.ts`.
+
+## Rendering
+
+The bible route is a dynamic catch-all, `[...slug]`, that prerenders every slug via `generateStaticParams` over `bible.slugs`. It fetches the page data and hands the compiled `body` to a shared `ArticleLayout` together with the custom MDX component map, `studioMdxComponents`.
+
+That map is where the bible-specific components are registered:
+
+{/* docref code content-system-mdx-components */}
+
+Each tag maps to the component that renders it:
+
+<BibleTable id="portal-mdx-components">
+
+| MDX tag                                                         | Component       | What it renders                                        |
+| --------------------------------------------------------------- | --------------- | ------------------------------------------------------ |
+| `<Figure>`                                                      | `MdFigure`      | A numbered, captioned figure (mermaid / table / image) |
+| `<BibleTable>`                                                  | `MdBibleTable`  | A numbered, captioned GFM table                        |
+| `<Term>`                                                        | `MdTerm`        | A glossary hover-card link                             |
+| `<Cite>`                                                        | `MdCite`        | A numbered citation with a reference hover-card        |
+| `<Figures>` / `<BibleTables>` / `<Glossary>` / `<Bibliography>` | list components | The index pages that enumerate all of each kind        |
+
+</BibleTable>
+
+## The figure / table / term / reference registries
+
+A deliberate choice: the metadata for figures, tables, glossary terms, and references is **not** in the MDX. It lives in four central TypeScript files, `apps/studio/src/content/{figures,tables,terms,references}.ts`, keyed by id. The MDX only references an id; the component looks the rest up.
+
+- `<Figure id="x">` wraps a mermaid fence (or table/image). `MdFigure` looks `x` up in `figures` to get its number and caption. Captions are registered centrally, so the MDX does not pass one.
+- `<BibleTable id="x">` works the same way against `tables`.
+- `<Term id="x">label</Term>` renders a hover card with the term's name, expansion, and description from `terms`, linking to the glossary anchor; an unknown id renders a visible `(?)` rather than crashing.
+- `<Cite id="x" s=.. p=.. line=..>` renders a numbered link with a reference hover-card and an optional locator; references support plain URLs, DOIs, and archived snapshots.
+
+The reason for the central registries is consistency: numbering, captions, and the index pages (`/dev/bible/figures`, `/dev/bible/glossary`, `/dev/bible/references`) all derive from one source, so a figure cannot have two different captions and the numbering cannot drift from the prose. The cost is that adding a figure touches two files, the MDX and the registry, which is a fair trade for never having a mislabeled or dangling reference.
+
+Mermaid diagrams are rendered client-side; velite does not validate them, so a malformed diagram fails in the browser, not at build. That is why every diagram in this bible is wrapped in `<Figure>` with the fence isolated by blank lines.

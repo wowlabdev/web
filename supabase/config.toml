@@ -1,0 +1,6 @@
+[functions.ai]
+verify_jwt = true
+static_files = ["./functions/ai/prompts/*.eta"]
+
+[functions.icons]
+verify_jwt = false

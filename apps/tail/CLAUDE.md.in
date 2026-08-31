@@ -1,0 +1,10 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Boundaries
+
+- `src/collect.ts` converts handled logs and uncaught exceptions into one error record.
+- `src/schema.ts` owns the Analytics Engine column layout and queries.
+- `scripts/errors.mts` queries grouped errors through the Analytics Engine SQL API.
+- Do not store request headers, query strings, or unredacted URLs.
+{% endblock %}

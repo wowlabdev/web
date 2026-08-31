@@ -1,0 +1,18 @@
+# Package manager
+pnpm-lock.yaml
+
+# Generated application output
+.markupwright/cache
+**/.intlayer
+**/.next
+**/.open-next
+**/.velite
+**/cloudflare-env.d.ts
+**/dist
+**/dist-*
+**/out
+
+# Generated and binary assets
+apps/studio/public/benchmarks
+apps/studio/public/wasm
+vendor

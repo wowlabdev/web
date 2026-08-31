@@ -1,0 +1,47 @@
+import { insert, plural } from "intlayer";
+
+import { en } from "../i18n";
+
+// prettier-ignore
+export default en("enginePage", {
+  // apps/studio/src/components/dev/engine/auras-table.tsx, apps/studio/src/components/dev/engine/engine-content.tsx, apps/studio/src/components/dev/engine/hero-talents-section.tsx +4 more
+  "acrossSpecs": insert("across {{count}} specs"),
+  "auras": "Auras",
+  "badgeOffGcd": "off-gcd",
+  "badgePet": "pet",
+  "benchmarkReport": "Benchmark Report",
+  "cast": "Cast",
+  "columnAura": "Aura",
+  "columnDuration": "Duration",
+  "columnFlags": "Flags",
+  "columnName": "Name",
+  "columnPandemic": "Pandemic",
+  "columnPeriodic": "Periodic",
+  "columnSpell": "Spell",
+  "columnStacks": "Stacks",
+  "columnTalent": "Talent",
+  "columnTarget": "Target",
+  "columnType": "Type",
+  "cooldown": "Cooldown",
+  "cost": "Cost",
+  "damage": "Damage",
+  "implementedSpecs": "Implemented Specs",
+  "intro": "Live introspection of the WASM simulation engine. Everything below is read directly from the compiled binary at runtime.",
+  "no": "No",
+  "noHeroTalents": "No hero talents defined.",
+  "openItemsReportAria": insert("Open {{slug}} items report"),
+  "openManifestAria": insert("Open {{slug}} manifest on GitHub"),
+  "resourceStats": insert("Max {{max}} · Regen {{regen}}/s · Start {{start}}"),
+  "spec": "Spec",
+  "specCount": plural({ one: "{{count}} spec", other: "{{count}} specs" }),
+  "spells": "Spells",
+  "tabAurasCount": insert("Auras ({{count}})"),
+  "tabHeroCount": insert("Hero Talents ({{count}})"),
+  "tabSpellsCount": insert("Spells ({{count}})"),
+  "tabTalentsCount": insert("Talents ({{count}})"),
+  "talents": "Talents",
+  "title": "Engine",
+  "typeAura": "aura",
+  "typeSpell": "spell",
+  "yes": "Yes",
+});

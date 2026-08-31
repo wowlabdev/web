@@ -1,0 +1,6 @@
+## Rules
+
+- Use ONLY the fields, spell slugs, aura slugs, and resource names listed above.
+- For a `read` condition, `domain` and `name` must be one of the allowed fields; for a `cast` action, `spell` must be an allowed slug.
+- `call` and `run` actions reference a key in `lists`.
+- Emit ONLY the requested object — no prose, no markdown, no explanation.

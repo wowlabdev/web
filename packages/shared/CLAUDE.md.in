@@ -1,0 +1,10 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Notes
+
+- Source-only package (`@wowlab/shared`) consumed directly by [`apps/landing`](../../apps/landing/) and [`apps/studio`](../../apps/studio/). No build step.
+- Every public module is an explicit entry in the `exports` map in `package.json`. Add new files there. There are no `tsconfig` path aliases and no barrel-everything re-exports.
+- Holds shared UI (`components/ui`, `components/common`, `components/content`), library code (`lib/`), markdown content (`content/`), and all translations (`i18n/`).
+- Copy is wired through intlayer (`i18n/`). Load the `intlayer` skill before touching strings.
+{% endblock %}

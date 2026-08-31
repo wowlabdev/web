@@ -1,0 +1,5 @@
+Critique this rotation for damage output and find the highest-impact improvements.
+
+Lead with the trace summary in the diagnostics. Look for concrete, fixable problems: wasted GCDs and downtime, resource capping or starvation, cooldowns drifting or held too long, conditions that never fire or always fire, and high-value actions sitting below weaker ones in the priority. If no trace is present, say so and critique from the rotation structure alone.
+
+Rank findings by likely DPS impact, give a specific fix for each, and reference every spell and aura as an inline tooltip link. Skip whatever already looks correct. Be concise.

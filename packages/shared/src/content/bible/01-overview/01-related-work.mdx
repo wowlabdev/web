@@ -1,0 +1,72 @@
+---
+title: Related Work
+description: History of WoW simulation tools and the two fundamental approaches to gear optimization
+nextSteps:
+  - 01-overview/02-architecture
+---
+
+The history of WoW combat simulation, the two fundamentally different approaches that emerged, and why it matters for understanding the design decisions behind WoW Lab.
+
+## The Two Schools
+
+- Two fundamentally different approaches to answering "what gear should I wear": discrete event simulation and stat weighting
+- Both try to solve the same problem but make very different trade-offs in accuracy, speed, and complexity
+- Understanding the difference is essential context for why WoW Lab exists and the choices it makes
+
+## Discrete Event Simulation
+
+- Simulate combat second by second (or more precisely, event by event), tracking every spell cast, buff tick, proc trigger, and cooldown
+- No shortcuts. Model the actual game loop. Roll the dice. Let mechanics interact naturally
+- Inherently accurate when modeled correctly because it mirrors what actually happens in-game
+- Downside: computationally expensive, requires thousands of iterations for statistical significance
+- This is what SimulationCraft pioneered and what WoW Lab does
+
+### SimulationCraft
+
+- The gold standard for years. Open source C++ engine, community maintained
+- Action Priority Lists (APL) for rotation logic, same concept WoW Lab uses
+- Raidbots made it accessible by wrapping SimC in a web UI with cloud compute
+- Limitations: single-threaded C++ codebase, difficult to extend, no browser execution, aging architecture
+- SimC proved the approach works. The question was whether the tooling around it could be modernized
+
+### Early Ask Mr. Robot
+
+- Early versions used a discrete simulation approach similar to SimC
+- Provided gear optimization on top of simulation results
+- Later pivoted away from discrete simulation entirely (covered below)
+
+## Stat Weights and Weighted Engines
+
+- The alternative approach: instead of simulating combat, assign a numerical weight to each stat point
+- "1 point of Crit is worth 0.8 DPS, 1 point of Haste is worth 0.95 DPS" and so on
+- Score gear by multiplying each stat by its weight and summing. Higher score means better gear
+- Fast. Trivially fast. No simulation needed at all once you have the weights
+- The problem: weights are only accurate at the exact gear level they were computed for
+
+### Where Stat Weights Break Down
+
+- Stat interactions are non-linear. Haste makes Crit better because you cast more spells. Crit makes Haste better because each spell hits harder on crit
+- At different gear levels the relative value of stats shifts, sometimes dramatically
+- Stat weights are a linear approximation of a non-linear system. Works okay near the measurement point, gets worse the further you move from it
+- Breakpoints, tier set interactions, trinket procs, and talent synergies make this even messier
+- You end up needing to re-simulate to get new weights anyway, which defeats the purpose
+
+### QE Live
+
+- Stat weight based optimization tool for WoW
+- Fast results, no waiting for simulation runs
+- Trade-off: accuracy suffers in exactly the situations where players need the most help (comparing very different gear sets, evaluating tier pieces, trinkets with procs)
+
+### Newer Ask Mr. Robot
+
+- Pivoted to a stat weight and analytical model approach
+- Faster than discrete simulation but inherits the fundamental accuracy limitations of the approach
+- Made the deliberate trade-off of speed over simulation fidelity
+
+## Why Discrete Simulation Wins
+
+- When specs have 10+ interacting buffs, procs, and cooldowns, there is no closed-form solution
+- The only way to know for sure is to simulate it and let the mechanics play out
+- Stat weights can lie. Simulation results converge to truth given enough iterations
+- The real challenge is not whether to simulate but how to make simulation fast and accessible enough that players don't need to settle for approximations
+- That is the problem WoW Lab sets out to solve

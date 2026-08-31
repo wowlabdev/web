@@ -1,0 +1,23 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+# Instructions for Using the shadcn/studio MCP SERVER
+
+**Strict Adherence Required**: follow all instructions precisely. No shortcuts, no skipping steps.
+
+## CRITICAL RULE: NEVER DEVIATE FROM THE STEP-BY-STEP WORKFLOW
+
+- Follow each step immediately after completing the previous one.
+- Complete the ENTIRE workflow without stopping for user confirmation.
+- No explanations between steps. No additional tool calls not required by the workflow.
+
+### Workflow Rules
+
+- **CREATE-UI (/cui)**: Collect first, install last. Mandatory content customization after install.
+- **REFINE-UI (/rui)**: Follow refine workflow using component tools.
+- **INSPIRATION-UI (/iui)**: Follow inspiration workflow for design ideas.
+- **FIGMA-TO-CODE (/ftc)**: Follow figma-to-code workflow for converting designs.
+
+### Recovery
+
+If deviating: stop, identify correct step, continue from there, complete full workflow.
+{% endblock %}

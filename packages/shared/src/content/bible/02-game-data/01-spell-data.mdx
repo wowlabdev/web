@@ -1,0 +1,56 @@
+---
+title: Spell Data
+description: The SpellDataFlat type and its SpellEffect rows. The field groups the engine reads to resolve costs, coefficients, timing, and aura behaviour
+nextSteps:
+  - 02-game-data/02-talent-trees
+---
+
+A spell in WoW is not one row. The client splits a single ability across a dozen tables: its name, its timing, its costs, its school, and a variable number of effects each with their own coefficients. The transform layer joins all of that back together into one struct, `SpellDataFlat`, so the rest of the system can treat a spell as a single value. The simplest mental model: `SpellDataFlat` is "everything the engine could ever want to know about one spell, flattened into one record."
+
+This is the largest and most consulted type in the data layer, so it is worth walking through its field groups rather than dumping the whole struct. Because `SpellDataFlat` derives serde snake_case, the exact same struct deserializes from a CSV-derived transform, a Supabase JSON row, or a JS-bridge value. That single-shape property is what lets three very different backends feed one engine; I return to it in [Data Resolution](/dev/bible/game-data/data-resolution).
+
+## Field groups
+
+Rather than 80-odd fields in arbitrary order, the struct is organized into logical groups. These are the groups the engine actually reads during `resolve_game_data` (covered in [Codegen](/dev/bible/game-data/codegen)).
+
+<BibleTable id="gamedata-spell-fields">
+
+| Group                | Representative fields                                                                                                            |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Identity / text      | `id`, `name`, `description`, `aura_description`, `is_passive`, `knowledge_source`                                                |
+| Timing / cost        | `cast_time`, `recovery_time`, category IDs and recovery times, `start_recovery_time`, `power_costs`, `max_charges`               |
+| Range / AoE          | `range_max_0/1`, `range_min_0/1`, `cone_degrees`, `radius_max`, `radius_min`                                                     |
+| School / coefficient | `defense_type`, `school_mask`, `bonus_coefficient_from_ap`, `effect_bonus_coefficient`, `min_scaling_level`, `max_scaling_level` |
+| Interrupts           | `interrupt_aura_0/1`, `interrupt_channel_0/1`, `interrupt_flags`                                                                 |
+| Duration / empower   | `duration`, `max_duration`, `can_empower`, `empower_stages`                                                                      |
+| Vec columns          | `attributes`, `effect_trigger_spell`, `implicit_target`, `learn_spells`, `effects`                                               |
+| Aura props           | `max_stacks`, `periodic_type`, `tick_period_ms`, `refresh_behavior`, `pandemic_refresh`, `tick_may_crit`, `tick_on_application`  |
+| RPPM / labels        | `rppm_base_rate`, `rppm_flags`, `rppm_mods`, `labels`                                                                            |
+
+</BibleTable>
+
+A couple of fields carry contracts that are not obvious from their names, and getting them wrong silently produces wrong cooldowns:
+
+- **Cooldowns are independent pools.** `recovery_time` is the spell's own timer, `category_id` and `category_recovery_time` describe a shared cooldown pool, and `charge_category_id` and `charge_recovery_time` describe a shared charge pool. A spell can participate in all of them at once.
+- **Start recovery is another category pool.** `start_recovery_category` identifies the pool and `start_recovery_time` is its lock duration. Category 133 is the ordinary player GCD; other categories serialize only their own members, while category 0 means no start-recovery lock.
+- **A non-zero `interrupt_channel_0` means the spell is a channel**, which changes how its "cast time" is interpreted. For channels the duration field is the channel length, not the cast bar.
+
+The resolver preserves these identities and durations separately. Runtime maps are keyed by the raw positive category ID, so newly added game-data categories work without adding enum variants or manifest overrides.
+
+## Effects
+
+The payload of a spell lives in its effects. `effects` is a `Vec<SpellEffect>`, and each `SpellEffect` is one DBC effect row carrying its own type, aura sub-type, base points, and the two coefficients that drive damage:
+
+{/* docref struct spell-data-spell-effect */}
+
+A few of those fields carry conventions worth calling out. `index` is 0-based in the flat row even though the same effect is `$s1` (1-based) in descriptions. `effect` is the effect type id and `aura` is the aura sub-type id. `coefficient` and `variance` are the direct-damage roll, while `bonus_coefficient` is the spell-power coefficient and `bonus_coefficient_from_ap` is the attack-power coefficient.
+
+The coefficient naming is the one trap here. When the resolution pass builds the engine's damage view it reads `bonus_coefficient` as the SP coefficient and `bonus_coefficient_from_ap` as the AP coefficient. An effect whose direct coefficients are both zero but which redirects to a trigger spell is followed down a bounded chain to find the real payload. I cover that trigger-chain walk in [Codegen](/dev/bible/game-data/codegen).
+
+There is a subtle index mismatch to keep in your head. The flat `SpellEffect.index` is 0-based, but the resolver's `get_spell_effect(spell_id, effect_index)` takes a **1-based** index because that is the author-facing convention used in manifests and overrides. The local resolvers translate between the two via `validate_effect_index`, which subtracts one and treats index `0` as "not found":
+
+{/* docref fn spell-data-validate-effect-index */}
+
+Mixing the two conventions is the single easiest way to read the wrong effect.
+
+The remaining sub-types are small: `PowerCostEntry { power_type, cost, cost_pct, optional_cost }` describes one resource cost, `EmpowerStage { stage, duration_ms }` one empower tier, and `LearnSpell { learn_spell_id, overrides_spell_id }` the learn/override linkage. None of them need their own page; they exist only to keep the per-spell record self-contained.

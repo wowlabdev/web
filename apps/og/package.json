@@ -1,0 +1,30 @@
+{
+  "name": "@apps/og",
+  "version": "0.1.0",
+  "description": "WoW Lab Open Graph image worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "wrangler deploy --dry-run --env= --outdir dist",
+    "dev": "wrangler dev",
+    "format": "prettier --write --ignore-path ../../.prettierignore .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "ncu": "ncu -u",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cf-wasm/og": "^0.5.0",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260830.1",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@wowlab/eslint-config": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "wrangler": "catalog:",
+    "zx": "catalog:"
+  }
+}

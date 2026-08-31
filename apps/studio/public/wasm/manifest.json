@@ -1,0 +1,4 @@
+{
+  "engineWasm": "/wasm/wowlab_engine_bg.fd051df9b89e.wasm",
+  "commonWasm": "/wasm/wowlab_common_bg.77d7c43553d2.wasm"
+}

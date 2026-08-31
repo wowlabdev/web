@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "the website" %}
+{% block description %}
+WoW Lab web application built with [Next.js](https://nextjs.org/).
+{% endblock %}

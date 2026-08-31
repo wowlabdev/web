@@ -1,0 +1,33 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Overview
+
+Six Supabase Auth emails, authored as react-email components and shipped as static HTML.
+
+- Sign up (`confirmation`) and sign in (`magic_link`) use the OTP code only, no links.
+- `recovery`, `email_change`, and `invite` use a button link (plus the code where it applies).
+- `reauthentication` is code only.
+
+Brand styling lives in `emails/components/theme.ts` (the app's oklch tokens resolved to static hex, since email clients cannot use CSS variables) and `emails/components/brand-layout.tsx` (the shared shell). Dark theme. The logo is hardcoded to `https://wowlab.gg/logo.png` because email clients need an absolute PNG.
+
+Supabase Go variables ({% raw %}`{{ .Token }}`, `{{ .ConfirmationURL }}`{% endraw %}, etc.) are written as literal strings in the templates and pass through render untouched.
+
+## Preview and edit
+
+```bash
+pnpm email:dev   # from repo root, react-email preview on :3001
+```
+
+Edit the `emails/*.tsx` templates and the shared pieces in `emails/components/`.
+
+## Deploy
+
+```bash
+SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... pnpm email:deploy
+```
+
+`email:deploy` runs `packages/emails/scripts/deploy.mts`: it renders the templates to `out/`, then `PATCH`es only the `mailer_templates_*` and `mailer_subjects_*` fields on the project's auth config via the Supabase Management API. It does not touch SMTP, redirect URLs, providers, or any other auth setting. We do not use `supabase config push`, which overwrites the entire auth config.
+
+Both `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` are required. Create the access token on the [account tokens page](https://supabase.com/dashboard/account/tokens).
+{% endblock %}

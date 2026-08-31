@@ -1,0 +1,6 @@
+Explain the selected part of the rotation in plain English: what it does, when it fires, and how its conditions interact with the rest of the priority.
+
+If the selection is just "the current rotation", give a short high-level walkthrough of the overall priority instead of going action by action. Reference every spell and aura as an inline tooltip link. Keep it tight and concrete, no filler.
+
+Selection:
+<%= it.selection %>

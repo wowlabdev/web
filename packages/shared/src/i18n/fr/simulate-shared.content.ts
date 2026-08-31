@@ -1,0 +1,48 @@
+import { insert } from "intlayer";
+
+import { fr } from "../i18n";
+
+// prettier-ignore
+export default fr("simulateShared", {
+  // apps/studio/src/components/core/simulate/bags/bags-configure-step.tsx, apps/studio/src/components/core/simulate/bags/bags-inventory-step.tsx, apps/studio/src/components/core/simulate/drops/drops-configure-step.tsx +17 more
+  "back": "Retour",
+  "bagBadge": "Sac",
+  "cannotDetectSpec": "Impossible de détecter la spécialisation depuis la chaîne de talents.",
+  "characterLevel": insert("Niveau {{level}}"),
+  "empty": "Vide",
+  "equippedCount": insert("{{count}} équipés"),
+  "failedToParseProfile": "Échec de l'analyse du profil.",
+  "headerItem": "Objet",
+  "headerSource": "Source",
+  "inBagsCount": insert("{{count}} dans les sacs"),
+  "includeWeeklyRewards": "Inclure les récompenses hebdomadaires",
+  "indexBagsDescription": "Fouille l'équipement de tes sacs pour trouver la meilleure combinaison. Parfait pour les changements en plein raid.",
+  "indexBagsTitle": "Meilleur dans les sacs",
+  "indexDropsDescription": "Évalue un objet qui drop face à ton build actuel avant de passer ton tour.",
+  "indexDropsTitle": "Optimiseur de drops",
+  "indexIntro": "Trois outils, le même moteur. Choisis celui qui correspond à ce que tu veux décider. Tout tourne dans ton navigateur, sauf si tu boostes vers le pool.",
+  "indexQuickDescription": "Colle un profil SimC, lance-le et récupère un DPS. Le moyen le plus rapide pour un contrôle rapide.",
+  "indexQuickTitle": "Sim rapide",
+  "itemLevelShort": insert("iLvl {{level}}"),
+  "likelihood": "Probabilité",
+  "next": "Suivant",
+  "noBagItems": "Aucun objet de sac trouvé dans votre profil SimC. Activez l'option \"bags\" de l'addon avant d'exporter.",
+  "selectAll": "Tout sélectionner",
+  "selectDeselectAll": "Tout désélectionner",
+  "simcInputLabel": "Profil SimC",
+  "simcInputPlaceholder": "Collez votre profil SimC ici...",
+  "specNameFallback": insert("Spé {{id}}"),
+  "specNotSupported": insert("La spé {{id}} n'est pas prise en charge par cette version de l'engine."),
+  "statCombinationsTitle": "Combinaisons",
+  "statCombinationsTrend": insert("sur {{count}} emplacements"),
+  "statSelectedItemsAvailable": insert("{{count}} disponibles"),
+  "statSelectedItemsTitle": "Objets sélectionnés",
+  "stepConfigure": "Configurer",
+  "stepImport": "Import",
+  "stepInventory": "Inventaire",
+  "stepSources": "Sources",
+  "tabGrid": "Grille",
+  "tabPaperdoll": "Personnage",
+  "weeklyBadge": "Hebdo",
+  "weeklyCount": insert("{{count}} hebdomadaires"),
+});

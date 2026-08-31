@@ -1,0 +1,6 @@
+Contact: https://github.com/wowlabdev/web/security/advisories/new
+Contact: https://wowlab.gg/contact
+Expires: 2027-06-01T00:00:00.000Z
+Preferred-Languages: en, de, fr
+Canonical: https://wowlab.gg/.well-known/security.txt
+Policy: https://github.com/wowlabdev/web/blob/main/SECURITY.md

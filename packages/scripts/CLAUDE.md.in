@@ -1,0 +1,11 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Structure
+
+- `cli/` contains command entry points.
+- `deployment/` owns deployment targets, Cloudflare adapters, and GitHub workflow selection.
+- `i18n/` validates translation structure and formatting.
+
+Keep application differences in the deployment registry. Apps should not own deployment scripts.
+{% endblock %}

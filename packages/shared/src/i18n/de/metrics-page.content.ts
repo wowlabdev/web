@@ -1,0 +1,37 @@
+import { de } from "../i18n";
+
+// prettier-ignore
+export default de("metricsPage", {
+  // apps/studio/src/components/int/metrics/chart-metrics-area.tsx, apps/studio/src/components/int/metrics/error-state.tsx, apps/studio/src/components/int/metrics/metrics-page.tsx +2 more
+  "active": "aktiv",
+  "channels": "Channels",
+  "chunks": "Chunks",
+  "chunksAssigned": "Chunks zugewiesen",
+  "chunksReclaimed": "Chunks zurückgefordert",
+  "clients": "Clients",
+  "connected": "verbunden",
+  "connecting": "Verbindend",
+  "envHint": "Setze GRAFANA_PROMETHEUS_URL und GRAFANA_PROMETHEUS_TOKEN um Charts zu aktivieren.",
+  "errorBadge": "Fehler",
+  "hours": "Stunden",
+  "inflight": "inflight",
+  "live": "Live",
+  "loading": "Lädt...",
+  "messagesReceived": "Nachrichten empfangen",
+  "messagesSent": "Nachrichten gesendet",
+  "nodesOffline": "Nodes offline",
+  "nodesOnline": "Nodes online",
+  "notAvailable": "Historische Daten nicht verfügbar.",
+  "notEnoughData": "Nicht genügend Datenpunkte",
+  "pending": "Ausstehend",
+  "running": "Laufend",
+  "staleCleanups": "Veraltete Bereinigungen",
+  "subscriptions": "Subscriptions",
+  "tabBeacon": "Beacon",
+  "tabSentinel": "Sentinel",
+  "total": "gesamt",
+  "unique": "einzigartig",
+  "updating": "Aktualisiert",
+  "uptime": "Betriebszeit",
+  "users": "Benutzer",
+});

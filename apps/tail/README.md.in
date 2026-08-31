@@ -1,0 +1,12 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "Cloudflare error collector" %}
+{% block description %}
+Tail Worker that groups WoW Lab server errors in Workers Analytics Engine.
+
+```console
+pnpm errors dev --hours 6
+```
+
+Use `--json` for machine-readable output. The command reuses the current
+Wrangler login.
+{% endblock %}

@@ -1,0 +1,40 @@
+---
+title: Introduction
+description: A technical reference for WoW simulation methodology and combat mechanics
+nextSteps:
+  - 01-overview/00-motivation
+  - 01-overview/02-architecture
+---
+
+Unlike our [documentation](/dev/docs) this so aptly named <Q>Bible</Q> is meant to provide an in-depth overview of the whole project. If you are looking for general usage instructions on how to configure WoW Lab's features look no further than the [introduction](/dev/docs/introduction) of the documentation. If you are looking to contribute to WoW Lab or simply want to understand how it's architecture or simulation internals work you are in the right place.
+
+## Prelude
+
+Given the length of this bible, it's natural to skip content. However, I would recommend at least reading the introduction to understand how to find what you are interested in. In contrast to the docs which are written as a user facing guide, this more closely follows the structure of a paper. While I in no way claim accuracy in all areas, the idea behind it is to create a sustainable and lasting resource on how to run combat simulations in World of Warcraft. This includes both the technical aspects behind the infrastructure powering WoW Lab, as well as the relevant game mechanics including parsing and interpreting all required data from the World of Warcraft DBC files.
+
+It is worth highlighting that almost all of the algorithms used and problems solved apply to a wide range of discrete simulations. None of the problems we face are new. They are well documented in simulation literature and game engine design. While I do believe that I have a solid grasp on most subjects, it would be foolish to think any one person knows best. I invite any reader to contribute to the bible on [GitHub](https://github.com/wowlabdev/web/tree/main/packages/shared/src/content) and question how we do things and why. If one was forced to summarize the idea behind the bible in one sentence, let it be this:
+
+> 'Tis but a humble attempt to combine well-researched solutions to well-known problems.
+
+It is my firm believe that knowledge belongs to everyone and I hope most people recognize WoW Lab and in extend this bible for what it is meant to be: A way for the community to preserve this knowledge in a lasting and open way.
+
+## Finding content
+
+First and foremost the entire bible is searchable. Just hit <Kbd>⌘</Kbd> + <Kbd>K</Kbd> or use the search bar on the top of the navigation to the right. If you are not reading this on the [WoW Lab website](http://wowlab.gg/dev/bible/introduction) I would highly recommend doing so, due to most of the markdown components used being custom made.
+
+As mentioned earlier the bible roughly follows the structure of a scientific paper. Therefore it starts with the motivation behind the project and follows up with the problems that it tries to solve. Both the infrastructure behind WoW Lab and the actual game specific challenges have been given dedicated sections. Finally it demonstrates my humble solutions to these problems and most importantly why I chose these solutions. The discrete simulation space is vast and for every problem there are multiple solutions. This makes the roads not taken as important as the ones we settled on. I encourage all interested readers to study the [references](/dev/bible/references) for more in-depth knowledge. Just to re-iterate: The absolute minoriy of things we do here are new and I do believe every single cited source in the bible is worth a read.
+
+Following are the most important sections:
+
+<BibleTable id="bible-sections">
+
+| Section                                               | Description                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Overview](/dev/bible/overview/architecture)          | Motivation, related work, the system architecture, and the rotation language                     |
+| [Game Data](/dev/bible/game-data/dbc-overview)        | DBC files, spell and talent data, item scaling, data resolution, and code generation             |
+| [Engine](/dev/bible/engine/discrete-event-simulation) | Discrete-event simulation, the event system, the rotation compiler, the cast pipeline, mechanics |
+| [Distribution](/dev/bible/distribution/orchestration) | Orchestration, the WASM boundary, realtime, hosted compute, deployment, and the database         |
+| [Portal](/dev/bible/portal/architecture)              | The Next.js app: architecture, state, the rotation editor, the simulation UI, and the content    |
+| [Compendium](/dev/bible/compendium/death-knight)      | Per-class and per-spec theorycraft research and implementation notes                             |
+
+</BibleTable>

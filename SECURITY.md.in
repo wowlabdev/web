@@ -1,0 +1,23 @@
+{% extends "meta.md.j2" %}
+{% set display_name = "Security Policy" %}
+{% block content %}
+Security issues are best reported privately, before they go public.
+
+## Supported versions
+
+WoW Lab is a hosted service that always runs the latest version. The source-available code is supported at `main`.
+
+## Reporting a vulnerability
+
+Use [GitHub's private vulnerability reporting](https://github.com/wowlabdev/web/security/advisories) or the [WoW Lab contact page](https://wowlab.gg/contact). Do not open a public issue.
+
+Include where the issue is, how to reproduce it, and what an attacker could do with it.
+
+## Scope
+
+The applications and services in this repository and their hosted versions are in scope. Test only against systems and data you own. Do not run automated scans that degrade the service for other users.
+
+## Safe harbor
+
+Good-faith research under this policy will not draw legal action. Report issues privately, allow time for a fix, and do not access or destroy other people's data.
+{% endblock %}

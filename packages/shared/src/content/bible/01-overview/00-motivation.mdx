@@ -1,0 +1,48 @@
+---
+title: Motivation
+description: Why simulate WoW combat and what problems this project aims to solve
+nextSteps:
+  - 01-overview/01-related-work
+---
+
+Why simulate WoW combat at all, what value does it provide to players, the gap between theorycrafting spreadsheets and full discrete simulation, history of WoW simulation tools (SimulationCraft, Raidbots), what WoW Lab aims to do differently (source available, community-driven, sustainable).
+
+## Problem Statement
+
+The core challenges: extracting and maintaining game data from undocumented DBC files across patches, accurately modeling combat mechanics with thousands of interacting spells/auras/procs, achieving statistical significance in reasonable time (performance), making simulation accessible to non-technical players, scaling compute between the browser (free tier) and a hosted pool (paid tier).
+
+## Solution Approach
+
+High-level overview of the solution: a Rust-based discrete event simulation engine compiled to both native (for the hosted pool) and WASM (for browser), a data pipeline from DBC files through transformation to Postgres, a Next.js portal for configuration and visualization, a sentinel-scheduled pool of trusted workers on Fly for paid users, real-time coordination through Centrifugo.
+
+<Figure id="solution-architecture">
+
+```mermaid
+flowchart TB
+    subgraph data [Game Data]
+        DBC[WoW DBC Files] --> Parse[Rust Parser]
+        Parse --> Transform[Transform Layer]
+        Transform --> DB[(Supabase Postgres)]
+    end
+
+    subgraph engine [Simulation Engine]
+        Engine[Rust Engine] --> WASM[WASM Build]
+        Engine --> Native[Native Build]
+    end
+
+    subgraph portal [Portal]
+        DB --> App[Next.js App]
+        WASM --> App
+        App --> Config[Simulation Config]
+    end
+
+    subgraph compute [Hosted Pool]
+        Config --> Sentinel[Sentinel Scheduler]
+        Sentinel --> Pool[Fly Worker Pool]
+        Pool --> Native
+        Pool --> Results[Results]
+        Results --> App
+    end
+```
+
+</Figure>

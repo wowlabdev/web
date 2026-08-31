@@ -1,0 +1,220 @@
+{
+  "spell_id": 315341,
+  "spec_id": 260,
+  "input": {
+    "self_spell": {
+      "id": 315341,
+      "description": "Finishing move that blasts your target with your pistol, dealing Physical damage and increasing your damage dealt by $s2%. Multiple instances of this bonus can overlap.$?a235484[ Critical strikes with this ability deal four times normal damage.][]\r\n   1 point : ${$<damage>*1} damage, 4 sec\r\n   2 points: ${$<damage>*2} damage, 6 sec\r\n   3 points: ${$<damage>*3} damage, 8 sec\r\n   4 points: ${$<damage>*4} damage, 10 sec\r\n   5 points: ${$<damage>*5} damage, 12 sec$?s193531|((s394320|s394321)&!s193531)[\r\n   6 points: ${$<damage>*6} damage, 14 sec][]$?s193531&(s394320|s394321)[\r\n   7 points: ${$<damage>*7} damage, 16 sec][]",
+      "description_variables": "$CAP=${($AP+$OAP)*2/3}\r\n$damage=${$m1*$<CAP>/$AP}",
+      "cast_time": 0,
+      "recovery_time": 45000,
+      "duration": 2000,
+      "max_charges": 0,
+      "max_stacks": 20,
+      "range_max_0": 20.0,
+      "proc_rppm": 0.0,
+      "internal_cooldown": 45000,
+      "file_name": "inv_weapon_rifle_01",
+      "name": "Between the Eyes",
+      "effects": [
+        {
+          "index": 0,
+          "effect": 2,
+          "aura": 0,
+          "base_points": 0.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.05,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.75099998713,
+          "amplitude": 0.0,
+          "pvp_multiplier": 0.85
+        },
+        {
+          "index": 1,
+          "effect": 6,
+          "aura": 108,
+          "base_points": 4.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        },
+        {
+          "index": 2,
+          "effect": 6,
+          "aura": 108,
+          "base_points": 4.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 22,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        },
+        {
+          "index": 3,
+          "effect": 6,
+          "aura": 218,
+          "base_points": 50.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 12,
+          "misc_value_1": 5691,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        }
+      ]
+    },
+    "cross_spells": [],
+    "paperdoll": {
+      "spec_id": 260,
+      "spec_order_index": 0,
+      "class_id": 4,
+      "level": 90,
+      "is_male": true,
+      "max_health": 36080.0,
+      "role_mult": 1.0,
+      "stats": {
+        "attack_power": 1131.0,
+        "spell_power": 1131.0,
+        "primary_stat": 1131.0,
+        "intellect": 0.0,
+        "crit": 10.85,
+        "haste": 3.0055555555555555,
+        "mastery": 1.488888888888889,
+        "versatility": 1.8555555555555556
+      },
+      "weapon": {
+        "main_min": 0.0,
+        "main_max": 0.0,
+        "main_speed": 2.6,
+        "off_min": 0.0,
+        "off_max": 0.0,
+        "off_speed": 1.8
+      },
+      "known_spell_ids": [
+        1766, 2094, 2098, 3408, 5277, 5761, 5938, 8676, 8679, 13750, 13877,
+        14161, 14983, 31224, 35551, 51690, 57934, 61329, 79008, 86392, 185763,
+        193315, 193531, 193539, 193546, 196819, 196938, 231691, 231719, 235484,
+        256170, 271877, 272026, 279876, 280716, 315341, 315496, 315508, 315584,
+        315585, 378427, 378436, 378813, 378996, 381542, 381543, 381619, 381621,
+        381637, 381828, 381839, 381846, 381877, 381878, 381988, 381989, 394321,
+        394931, 395422, 423647, 423662, 423683, 428377, 441146, 441247, 441263,
+        441273, 441274, 441321, 441346, 441367, 441403, 441423, 441429, 452536,
+        469779, 470347, 470668, 1256630, 1259469, 1259481, 1259485, 1259498,
+        1259499, 1265861, 1267210, 1267216, 1267220, 1276626, 1276630, 1276679,
+        1277933
+      ],
+      "active_aura_ids": [
+        1784, 1856, 3408, 5761, 8679, 13750, 13877, 14983, 115192, 134735,
+        195627, 256171, 315341, 315496, 315584, 381637, 381878, 383281, 386270,
+        395422, 432021, 452917, 452923, 453250, 1214933, 1214934, 1214935,
+        1214937, 1249194
+      ]
+    }
+  },
+  "expected_fragments": [
+    {
+      "kind": "text",
+      "value": "Finishing move that blasts your target with your pistol, dealing Physical damage and increasing your damage dealt by "
+    },
+    {
+      "kind": "value",
+      "value": "4",
+      "raw": 4.0
+    },
+    {
+      "kind": "text",
+      "value": "%. Multiple instances of this bonus can overlap.\n   1 point : "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 4 sec\n   2 points: "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 6 sec\n   3 points: "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 8 sec\n   4 points: "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 10 sec\n   5 points: "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 12 sec\n   6 points: "
+    },
+    {
+      "kind": "value",
+      "value": "0",
+      "raw": 0.0
+    },
+    {
+      "kind": "text",
+      "value": " damage, 14 sec"
+    }
+  ],
+  "expected_text": "Finishing move that blasts your target with your pistol, dealing Physical damage and increasing your damage dealt by 4%. Multiple instances of this bonus can overlap.\n   1 point : 0 damage, 4 sec\n   2 points: 0 damage, 6 sec\n   3 points: 0 damage, 8 sec\n   4 points: 0 damage, 10 sec\n   5 points: 0 damage, 12 sec\n   6 points: 0 damage, 14 sec"
+}

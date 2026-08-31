@@ -1,0 +1,105 @@
+---
+title: Game Data API
+description: Public API for WoW class, spec, and item data
+nextSteps:
+  - 99-meta/00-mdx-components
+---
+
+# Game Data API
+
+Public Supabase Edge Functions serving hydrated WoW game data. No authentication required. All endpoints support CORS.
+
+Base URL: `https://api.wowlab.gg/functions/v1/data`
+
+## Endpoints
+
+### GET /data/classes
+
+Returns all 13 playable classes with their specs nested inside. Cached for 24 hours.
+
+```
+https://api.wowlab.gg/functions/v1/data/classes
+```
+
+Response:
+
+```json
+{
+  "classes": [
+    {
+      "id": 1,
+      "name": "Warrior",
+      "color": "#C69B6D",
+      "fileName": "classicon_warrior",
+      "iconUrl": "https://api.wowlab.gg/functions/v1/icons/large/classicon_warrior.jpg",
+      "specs": [
+        {
+          "id": 71,
+          "name": "Arms",
+          "role": 2,
+          "orderIndex": 0,
+          "fileName": "ability_warrior_savageblow",
+          "iconUrl": "https://api.wowlab.gg/functions/v1/icons/large/ability_warrior_savageblow.jpg"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Spec roles: `0` = Tank, `1` = Healer, `2` = DPS.
+
+### GET /data/items?ids=
+
+Returns items by ID. Max 50 per request. Cached for 1 hour.
+
+```
+https://api.wowlab.gg/functions/v1/data/items?ids=19019,32837
+```
+
+Response:
+
+```json
+{
+  "items": [
+    {
+      "id": 19019,
+      "name": "Thunderfury, Blessed Blade of the Windseeker",
+      "description": "",
+      "fileName": "inv_sword_39",
+      "iconUrl": "https://api.wowlab.gg/functions/v1/icons/large/inv_sword_39.jpg",
+      "itemLevel": 29,
+      "quality": 5,
+      "requiredLevel": 25,
+      "binding": 1,
+      "classId": 2,
+      "subclassId": 7,
+      "inventoryType": 13,
+      "stats": [{ "type": 3, "value": 2000 }],
+      "effects": [{ "spellId": 21992, "triggerType": 2 }],
+      "setInfo": null,
+      "speed": 2600,
+      "dmgVariance": 0.5
+    }
+  ]
+}
+```
+
+Item quality: `0` Poor, `1` Common, `2` Uncommon, `3` Rare, `4` Epic, `5` Legendary, `6` Artifact.
+
+## Icons
+
+Every object includes an `iconUrl` pointing to a large icon. Swap the size segment in the URL for other sizes:
+
+- `/icons/large/` — 56px (default)
+- `/icons/medium/` — 36px
+- `/icons/small/` — 18px
+
+## Filtering
+
+- Classes are filtered to IDs 1–13 (playable classes only, excludes pets/Adventurer/Traveler)
+- Specs exclude "Initial" placeholder specs (`order_index = 4`)
+
+## Implementation
+
+The API is deployed independently from this repository. The web apps consume its public endpoints over HTTPS and load the full game-data snapshot into the browser cache.

@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "Development and deployment tooling for WoW Lab Web" %}
+{% block description %}
+Shared commands used by the workspace and CI.
+{% endblock %}

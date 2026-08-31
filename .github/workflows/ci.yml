@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  CI_SCRIPTS_SHA256: ${{ vars.CI_SCRIPTS_SHA256 }}
+  DENO_DIR: /cache/deno
+  WOWLAB_CACHE_ROOT: /cache
+
+jobs:
+  scripts:
+    name: CI scripts
+    runs-on:
+      group: web-ci
+      labels: wowlab-web-ci
+    container: &check-container
+      image: node:24.20.0-bookworm@sha256:be23f54a88d34e8824c741b19b91064094f92c1c97b194144bfc8b50d67258e2
+      options: >-
+        --cap-drop=ALL
+        --cpus=12
+        --memory=24g
+        --memory-swap=24g
+        --pids-limit=4096
+        --security-opt=no-new-privileges
+      volumes:
+        - /var/cache/github-actions/web/ci:/cache
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Verify CI scripts
+        run: >-
+          test "$(find .github/scripts -type f -name '*.sh' -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d ' ' -f 1)"
+          = "${CI_SCRIPTS_SHA256:?}"
+
+      - name: Install CI tools
+        run: bash .github/scripts/environment.sh install-ci-tools
+
+      - name: Lint CI files
+        run: bash .github/scripts/lint.sh
+
+  validate:
+    name: Validate
+    needs: scripts
+    runs-on:
+      group: web-ci
+      labels: wowlab-web-ci
+    container: *check-container
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          deno: "true"
+
+      - name: Check peer dependencies
+        run: pnpm peers check
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level high
+
+      - name: Check documentation
+        run: pnpm docs:check
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Run tests
+        run: pnpm test
+
+  lint:
+    name: Lint
+    needs: scripts
+    runs-on:
+      group: web-ci
+      labels: wowlab-web-ci
+    container: *check-container
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          deno: "true"
+
+      - name: Run linters
+        run: pnpm lint
+
+  types:
+    name: Types
+    needs: scripts
+    runs-on:
+      group: web-ci
+      labels: wowlab-web-ci
+    container: *check-container
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          deno: "true"
+
+      - name: Generate application types
+        run: pnpm generate
+
+      - name: Check types
+        run: pnpm typecheck
+
+  build:
+    name: Build
+    needs: scripts
+    runs-on:
+      group: web-ci
+      labels: wowlab-web-ci
+    container:
+      image: node:24.20.0-bookworm@sha256:be23f54a88d34e8824c741b19b91064094f92c1c97b194144bfc8b50d67258e2
+      options: >-
+        --cap-drop=ALL
+        --cpus=48
+        --memory=56g
+        --memory-swap=56g
+        --pids-limit=8192
+        --security-opt=no-new-privileges
+      volumes:
+        - /var/cache/github-actions/web/ci:/cache
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          next-cache: "true"
+
+      - name: Build applications
+        run: pnpm build

@@ -1,0 +1,42 @@
+---
+title: Talent Trees
+description: The TraitTreeFlat graph, its node and edge types, and how a base64 loadout string decodes into the per-node selections the engine simulates
+nextSteps:
+  - 02-game-data/03-items-and-scaling
+---
+
+A talent tree is a graph: nodes connected by edges, where each node grants one or more spells and may have several ranks. A loadout, the string you paste from the game or from Wowhead, is just a compressed list of which nodes you bought and how many ranks. The data layer's job is two halves: describe the tree once, and decode a loadout against it into a concrete set of selections the engine can turn into spell ids.
+
+## The tree: `TraitTreeFlat`
+
+`TraitTreeFlat` is the flattened description of one spec's entire trait graph. Like every other flat type it deserializes identically from CSV-transform output or a Supabase row:
+
+{/* docref struct talent-trees-tree-flat */}
+
+The fields split into three groups. `spec_id`, `spec_name`, `class_name`, and `tree_id` are identity. `all_node_ids` is the full node membership, and `nodes` plus `edges` are the graph itself, with `sub_trees` holding the hero-talent subtrees. `point_limits` is the spend caps, defaulting to class 31, spec 30, and hero 10.
+
+A `TraitNode` carries its grid position, `max_ranks`, a `node_type`, and a `Vec<TraitNodeEntry>`. The entries are the important part. Each one holds the data the engine ultimately cares about:
+
+{/* docref struct talent-trees-node-entry */}
+
+A normal node has one entry; a choice node has several, and the loadout records which one you picked. Edges are minimal, just `id`, `from_node_id`, `to_node_id`, and `visual_style`, and exist mostly for the planner UI. The engine cares about purchased nodes, not the topology connecting them.
+
+## Decoding a loadout
+
+A loadout string is a base64-encoded bitstream in the same format the game client and Wowhead use. Decoding it is a pure function over the bytes, with no game data required. `decode_trait_loadout` reads a version byte, a 16-bit spec id, a 16-byte tree hash, and then a per-node run of selection bits: selected, purchased, partially-ranked, a 6-bit rank count, and for choice nodes a 2-bit choice index. The result is a `DecodedTraitLoadout`, the header plus a `Vec<DecodedTraitNode>`, one entry per node in tree order.
+
+That decoded list is positional. It says "node 0 has 2 ranks, node 1 is unselected", so it only becomes meaningful once paired with the tree that defines what each position is. That pairing happens in `apply_decoded_traits`, which walks the tree's nodes alongside the decoded selections and produces a `TraitTreeWithSelections`: the tree flattened together with a `Vec<TraitSelection>`. Each `TraitSelection` is `{ node_id, selected, ranks_purchased, choice_index }`, the engine-facing form.
+
+The resolver wires these two functions together. `DataResolver::decode_traits` has a default body that fetches the tree with `get_trait_tree`, decodes the string with `decode_trait_loadout`, and applies it with `apply_decoded_traits`. Because the body is default, every backend gets loadout decoding for free as long as it can return a `TraitTreeFlat`.
+
+## From selections to spell ids
+
+The engine does not simulate selections directly; it simulates the spells those selections grant. `enrich_loadout` bridges the gap. It is a pure function over an applied tree, so it lives in `wowlab-common` rather than the data port; the port only has to hand back the raw `TraitTreeWithSelections`. It walks the tree's nodes alongside the selections and, for every selection that is `selected` with `ranks_purchased > 0`, resolves the chosen entry: it indexes into the node's entries with `choice_index.unwrap_or(0)` and falls back to the first entry when that index is out of range. So a choice node uses its decoded `choice_index`, and a single-entry node uses its only entry whether or not an index was decoded. There is no "ambiguous, skip it" case; an undecoded choice resolves to entry `0`. Each resolved entry becomes an `EnrichedTalent` carrying the node's `spell_id`, ranks, and tree section, in tree order, with no deduplication.
+
+That enriched form is what `EnrichedLoadout::talent_selections` projects down to the engine's `(spell_id, ranks)` pairs, dropping placeholder entries whose `spell_id` is not positive:
+
+{/* docref fn talent-trees-get-spell-ids */}
+
+`decode_loadout_talents` (in `engine-application`) is the application-side glue that chains the whole sequence together: decode the string, resolve the tree, apply, enrich, and then turn each enriched talent into a `TalentSelection` whose `spell_id` is what the resolver fetches. Those ids are exactly what the resolution pass receives as extra spells to fetch, so a talented spell ends up in the engine's game-data view the same way a baseline spell does, a thread I pick up in [Codegen](/dev/bible/game-data/codegen).
+
+Because `decode_traits` is a default body built on `get_trait_tree`, every backend that can return a `TraitTreeFlat` gets loadout decoding for free, the WASM resolver included: its `get_trait_tree` calls the JS object's `getTraitTree`, so decoding works across the boundary rather than failing before it begins. The browser still typically decodes talents JS-side before invoking the engine, but that is a workflow choice, not a capability gap. I cover the WASM resolver's protocol in [Data Resolution](/dev/bible/game-data/data-resolution).

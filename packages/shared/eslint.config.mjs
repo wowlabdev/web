@@ -1,0 +1,53 @@
+import { createConfig, presets } from "@wowlab/eslint-config";
+
+export default createConfig({
+  ignores: [
+    ".intlayer/**",
+    ".next/**",
+    ".open-next/**",
+    ".velite/**",
+    ".wrangler/**",
+    "build/**",
+    "next-env.d.ts",
+    "out/**",
+    "styled-system/**",
+  ],
+  internalPatterns: ["^@/.*", "^@wowlab/.*"],
+  overrides: [
+    {
+      files: ["**/index.ts"],
+      rules: {
+        "perfectionist/sort-exports": ["error", { partitionByComment: true }],
+        "perfectionist/sort-named-exports": [
+          "error",
+          { partitionByComment: true },
+        ],
+      },
+    },
+    {
+      files: ["**/src/i18n/**"],
+      rules: { "@stylistic/quote-props": "off" },
+    },
+    {
+      files: ["**/*.{js,jsx,ts,tsx,mjs,mts,cjs,cts}"],
+      rules: { "@next/next/no-html-link-for-pages": "off" },
+    },
+    {
+      files: ["**/*.{ts,tsx,mts,cts}"],
+      rules: {
+        "@typescript-eslint/no-unnecessary-condition": "warn",
+        "react-hooks/incompatible-library": "off",
+      },
+    },
+  ],
+  presets: [
+    presets.next(),
+    presets.react({
+      tsconfigRootDir: import.meta.dirname,
+      typeChecked: true,
+      typescriptTypeChecked: false,
+    }),
+    presets.tanstackQuery(),
+    presets.node(),
+  ],
+});

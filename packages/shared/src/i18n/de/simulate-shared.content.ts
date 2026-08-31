@@ -1,0 +1,48 @@
+import { insert } from "intlayer";
+
+import { de } from "../i18n";
+
+// prettier-ignore
+export default de("simulateShared", {
+  // apps/studio/src/components/core/simulate/bags/bags-configure-step.tsx, apps/studio/src/components/core/simulate/bags/bags-inventory-step.tsx, apps/studio/src/components/core/simulate/drops/drops-configure-step.tsx +17 more
+  "back": "Zurück",
+  "bagBadge": "Tasche",
+  "cannotDetectSpec": "Spezialisierung konnte nicht aus dem Talente-String erkannt werden.",
+  "characterLevel": insert("Stufe {{level}}"),
+  "empty": "Leer",
+  "equippedCount": insert("{{count}} ausgerüstet"),
+  "failedToParseProfile": "Profil konnte nicht eingelesen werden.",
+  "headerItem": "Gegenstand",
+  "headerSource": "Quelle",
+  "inBagsCount": insert("{{count}} in Taschen"),
+  "includeWeeklyRewards": "Wöchentliche Belohnungen einbeziehen",
+  "indexBagsDescription": "Durchsuche die Ausrüstung in deinen Taschen nach dem besten Set. Ideal für Wechsel mitten im Raid.",
+  "indexBagsTitle": "Beste Tasche",
+  "indexDropsDescription": "Bewerte einen Beute-Drop für deinen aktiven Build, bevor du ihn ablehnst.",
+  "indexDropsTitle": "Drop-Optimierer",
+  "indexIntro": "Drei Werkzeuge, dieselbe Engine. Wähle das, was zu deiner Entscheidung passt. Alles läuft im Browser, sofern du nicht auf den Pool boostest.",
+  "indexQuickDescription": "Füge ein SimC-Profil ein, starte und erhalte einen DPS-Wert. Der schnellste Weg zu einem Sanity-Check.",
+  "indexQuickTitle": "Schnelle Sim",
+  "itemLevelShort": insert("GegStufe {{level}}"),
+  "likelihood": "Wahrscheinlichkeit",
+  "next": "Weiter",
+  "noBagItems": "Keine Taschen-Gegenstände im SimC-Profil gefunden. Stelle sicher, dass die Addon-Option \"bags\" aktiviert ist.",
+  "selectAll": "Alle auswählen",
+  "selectDeselectAll": "Alle abwählen",
+  "simcInputLabel": "SimC-Profil",
+  "simcInputPlaceholder": "SimC-Profil hier einfügen...",
+  "specNameFallback": insert("Spec {{id}}"),
+  "specNotSupported": insert("Spec {{id}} wird von diesem Engine-Build nicht unterstützt."),
+  "statCombinationsTitle": "Kombinationen",
+  "statCombinationsTrend": insert("über {{count}} Slots"),
+  "statSelectedItemsAvailable": insert("{{count}} verfügbar"),
+  "statSelectedItemsTitle": "Ausgewählte Gegenstände",
+  "stepConfigure": "Konfigurieren",
+  "stepImport": "Import",
+  "stepInventory": "Inventar",
+  "stepSources": "Quellen",
+  "tabGrid": "Raster",
+  "tabPaperdoll": "Charakterbogen",
+  "weeklyBadge": "Wöchentlich",
+  "weeklyCount": insert("{{count}} wöchentlich"),
+});

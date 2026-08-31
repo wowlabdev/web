@@ -1,0 +1,12 @@
+{% extends "instructions-root.md.j2" %}
+{% set display_name = "web" %}
+{% block content %}
+
+## AI Agent Instructions
+
+See `CLAUDE.md` for the repository rules and commands.
+
+### CLAUDE.md Index
+
+{{ index_of("CLAUDE.md", "apps", "packages", "supabase") }}
+{% endblock %}

@@ -1,0 +1,19 @@
+import "server-only";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
+import { env } from "@wowlab/shared/lib/env";
+
+import type { Database } from "./database.types";
+
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    },
+  );
+}

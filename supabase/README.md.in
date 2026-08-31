@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "Edge Functions" %}
+{% block description %}
+The Supabase Edge Functions used by the WoW Lab web apps.
+{% endblock %}

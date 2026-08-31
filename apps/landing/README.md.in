@@ -1,0 +1,18 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "marketing site" %}
+{% block description %}
+WoW Lab marketing site built with [Next.js](https://nextjs.org/).
+{% endblock %}
+
+{% block content %}
+## Development
+
+From the repository root:
+
+```console
+pnpm install
+pnpm --dir apps/landing dev
+```
+
+Use `pnpm --dir apps/landing dev:content` when editing blog or legal content.
+{% endblock %}

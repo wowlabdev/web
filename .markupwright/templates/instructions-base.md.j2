@@ -1,0 +1,10 @@
+{% set title = name | replace("@wowlab/", "") | replace("@apps/", "") %}
+{% if display_name %}{% set title = display_name %}{% endif %}
+{% set summary = description %}
+{% if subtitle %}{% set summary = subtitle %}{% endif %}
+# {{ title }}
+
+{% if version %}_v{{ version }}_
+
+{% endif %}{% if summary %}{{ summary }}
+{% endif %}

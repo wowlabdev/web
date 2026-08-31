@@ -1,0 +1,50 @@
+---
+title: Spec Handlers
+description: How a generated spec becomes the SpecHandler the loop drives, via CombatSystemBuilder and the canonical content catalog
+nextSteps:
+  - 03-engine/10-metrics
+---
+
+The loop drives a `SpecHandler` trait object and knows nothing else. The thing on the other side of that trait, for every spec, is one type: `CombatHandler`. This page is about how a declarative spec definition becomes a `CombatHandler` the loop can run. The path runs from generated code, through the builder, into the catalog the bootstrap looks up.
+
+## One handler, every spec
+
+`SpecHandler` is the contract between the clock and the combat logic. Its methods mirror the [event variants](/dev/bible/engine/event-system): `on_player_ready` returns the next `SpecAction`, `on_cast_complete` runs the [cast pipeline](/dev/bible/engine/cast-pipeline), and `on_aura_tick`, `on_aura_expire`, `on_auto_attack`, `on_cooldown_ready` handle the rest. Around those are lifecycle hooks like `on_sim_start` and `reset`, the `flush_scheduled` drain the loop calls after every dispatch, and the `total_damage` read-out the loop needs after a run.
+
+There is exactly one production implementation, and it bundles an immutable `CombatProgram` (the finalized spell, aura, proc, and index definitions), a mutable `CombatInstance` (the per-run state, including the dense rotation buffer), a `RotationEngine` (the compiled rotation), and its own `SimRng`:
+
+{/* docref struct spec-handlers-combat-handler */}
+
+Its trait methods map cleanly onto combat functions. `on_player_ready` syncs resources and target health, evaluates the rotation, and GCD-gates the result. `on_cast_complete` builds a `CombatCtx` and calls `process_cast`. `flush_scheduled` drains the handler's pending events into the loop's queue.
+
+So "a spec" is not a type. It is a configuration of spells, auras, resources, and a rotation, fed into the one `CombatHandler`.
+
+## From manifest to handler
+
+That configuration is authored as a TOML manifest and turned into Rust at build time by the code generator (covered under [Codegen](/dev/bible/game-data/codegen)). The generated code for each spec wires together three things: a `build_combat_system_draft` function, a `new_handler` factory, and one `SpecDescriptor` containing its `DeclaredSpecMetadata`. The generated barrel owns their canonical order. Equipped items follow the same combat-construction shape, registered per-item through a `register_item!` macro that bundles an item's RPPM proc, equip/use auras, use spells, and precombat auras into one call.
+
+`build_combat_system_draft` is a long fluent chain on `CombatSystemBuilder`. It declares the resource, the secondary resource if any, every aura and spell and auto-attack, threads in the `ResolvedGameData` snapshot, sets fight duration and enemy count, registers equipped items, and finally calls `into_draft()`. The builder methods take closures so each spell and aura can be configured inline, `spell(name, id, |s| ...)` and `aura(name, id, |a| ...)`, and the generated builder functions inside those closures read values straight out of `ResolvedGameData` wherever the manifest left a field unspecified. The manifest is overrides; the game data is the default.
+
+`into_draft` ends the composition-only builder stage without compiling a rotation or exposing runtime state. Engine Content's canonical composer then installs shared global content and expansion traits before consuming `CombatSystemDraft::finalize(rotation_json)` exactly once. Finalization prepares the rotation and selects portable bytecode or an explicitly enabled JIT executable, freezes the definitions and indexes into `CombatProgram`, initializes `CombatInstance`, and returns the pieces a handler needs:
+
+{/* docref struct spec-handlers-built-combat-system */}
+
+The generated `new_handler` always enters Engine Content's canonical composer. It builds the generated draft, installs shared global content and expansion traits in their required order, finalizes it once, then either finishes a plain `CombatHandler` or passes the built parts to the spec-specific custom handler named by the manifest. A custom handler holds the `CombatHandler` as an inner field and forwards the trait surface to it with the `delegate_spec_handler!` macro, overriding only the methods it needs (`on_sim_start` for precombat setup, say). When it does override `on_sim_start`, it reaches into the runtime through `CombatHandler::precombat_ctx`, which hands back a `HookCtx` anchored at `t = 0`; that constrained context is the same cast-hook API every hook uses, with conveniences like `apply_aura` and `gain_resource` rather than direct access to combat internals.
+
+## The content catalog
+
+The bootstrap does not import any spec by name. It looks one up by id through Ports' `ContentCatalog`. Engine Content supplies exactly one catalog containing the generated descriptor slice, generated item resolver dependencies, and authored expansion-trait dependencies. Each descriptor carries its spec identity, from which the class is derived, display name, one typed `DeclaredSpecMetadata` value, and the `handler_factory` function pointer. The metadata holds its resources, ordered spell and aura resolution ids, talents, hero-talent trees, rotation schema, and reported spells:
+
+{/* docref code spec-handlers-content-catalog */}
+
+At bootstrap, `content_catalog()` validates that exactly one catalog is linked and `descriptor(spec_id)` returns the matching entry. Missing or multiple catalogs, duplicate descriptors, malformed dependencies, and invalid metadata fail closed as typed spec-construction errors. Then `bootstrap` calls that descriptor's `handler_factory` with a `HandlerParams` carrying the resolved game data, rotation JSON, stats, talents, gear, buffs, and race, and gets back the boxed handler. That is the join: the [orchestration layer](/dev/bible/distribution/orchestration) finds a descriptor it never linked against by name, and the descriptor knows how to build its own handler.
+
+One subtlety the catalog depends on: its link-time registration can be dead-code-eliminated if nothing references the generated module. The generated `specs/mod.rs` defends against this with a `force_link_generated_specs` function that touches the ordered descriptor slice through `black_box`, so the linker keeps Engine Content's one catalog registration. Without it, a release build could silently omit the catalog.
+
+## Declared metadata and runtime introspection
+
+Game-data resolution needs the complete spell and aura id set before a handler can be built. The code generator already walks every manifest declaration and data-backed effect reference, so it emits those ids into `DeclaredSpecMetadata` in a defined category and declaration order. Hero talent spells and auras, reported spells, and primary and secondary resource types are part of the same typed declaration. Metadata validation rejects missing resolution ids, empty or duplicate symbolic names, invalid zero ids, and duplicate resource roles before Application uses the descriptor.
+
+`resolve_game_data` consumes that static declaration directly, resolves the required rows, and only then invokes the handler factory against populated data. Runtime `SpecHandler::introspect` remains a behavior API: CLI, WASM, and Forge consumers use it to describe the spell, aura, auto-attack, resource, and hero-talent behavior exposed by the built handler. It no longer acts as a second declaration source for the resolver. The full mechanics are under [Data Resolution](/dev/bible/game-data/data-resolution).
+
+With the handler built, cataloged, and driven by the loop, the only thing left is reading the result back out. The [metrics](/dev/bible/engine/metrics) page covers how a run's events become the telemetry the rest of the platform consumes.

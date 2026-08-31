@@ -1,0 +1,25 @@
+{% extends "readme-directory.md.j2" %}
+{% set subtitle = "linted workflow and deployment commands" %}
+{% block content %}
+
+Workflow shell logic lives here so it can be formatted with `shfmt`, checked
+with ShellCheck, and kept out of the workflow YAML.
+
+CI verifies the hash of every `*.sh` file before running any of them. Reviewed
+script changes require an explicit update to `CI_SCRIPTS_SHA256`:
+
+```bash
+checksum=$(find .github/scripts -type f -name '*.sh' -print0 \
+  | sort -z \
+  | xargs -0 sha256sum \
+  | sha256sum \
+  | cut -d ' ' -f 1)
+gh variable set CI_SCRIPTS_SHA256 --body "$checksum"
+```
+
+Lint the scripts locally with:
+
+```bash
+bash .github/scripts/lint.sh
+```
+{% endblock %}

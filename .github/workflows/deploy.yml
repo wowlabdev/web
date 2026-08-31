@@ -1,0 +1,209 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: >-
+    deploy-${{
+      github.event_name == 'workflow_dispatch' && inputs.target ||
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      (github.event.workflow_run.head_branch == 'main' && 'prod' || 'dev') ||
+      format('ignored-{0}', github.run_id)
+    }}
+  cancel-in-progress: >-
+    ${{
+      (github.event_name == 'workflow_dispatch' && inputs.target != 'prod') ||
+      (github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch != 'main')
+    }}
+
+env:
+  CI: true
+  DENO_DIR: /cache/deno
+  WOWLAB_CACHE_ROOT: /cache
+
+jobs:
+  context:
+    name: Prepare deployment
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on:
+      group: web-deploy
+      labels: wowlab-web-deploy
+    container:
+      image: node:24.20.0-bookworm@sha256:be23f54a88d34e8824c741b19b91064094f92c1c97b194144bfc8b50d67258e2
+      options: >-
+        --cap-drop=ALL
+        --cpus=4
+        --memory=8g
+        --memory-swap=8g
+        --pids-limit=2048
+        --security-opt=no-new-privileges
+      volumes:
+        - /var/cache/github-actions/web/deploy/context:/cache
+    outputs:
+      branch: ${{ steps.context.outputs.branch }}
+      sha: ${{ steps.context.outputs.sha }}
+      should-deploy: ${{ steps.context.outputs.should-deploy }}
+      target: ${{ steps.context.outputs.target }}
+    steps:
+      - name: Check out deployment workflow
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          install-filter: "@wowlab/scripts"
+
+      - id: context
+        name: Resolve deployment
+        env:
+          DEPLOY_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          DEPLOY_RUN_ID: ${{ github.event.workflow_run.id }}
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MANUAL_TARGET: ${{ inputs.target }}
+        run: pnpm --filter @wowlab/scripts deployment:context
+
+  deploy-tail:
+    name: Deploy Tail Worker to ${{ needs.context.outputs.target }}
+    needs: context
+    if: needs.context.outputs.should-deploy == 'true'
+    runs-on:
+      group: web-deploy
+      labels: wowlab-web-deploy
+    container:
+      image: node:24.20.0-bookworm@sha256:be23f54a88d34e8824c741b19b91064094f92c1c97b194144bfc8b50d67258e2
+      options: >-
+        --cap-drop=ALL
+        --cpus=4
+        --memory=4g
+        --memory-swap=4g
+        --pids-limit=2048
+        --security-opt=no-new-privileges
+      volumes:
+        - /var/cache/github-actions/web/deploy/${{ needs.context.outputs.target }}:/cache
+    environment:
+      name: ${{ needs.context.outputs.target == 'prod' && 'production' || 'development' }}
+    timeout-minutes: 10
+    steps:
+      - name: Check out ${{ needs.context.outputs.branch }}
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+          ref: ${{ needs.context.outputs.sha }}
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          install-filter: "@apps/tail... @wowlab/scripts"
+
+      - name: Deploy Tail Worker
+        env:
+          APP: tail
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DEPLOY_BRANCH: ${{ needs.context.outputs.branch }}
+          DEPLOY_SHA: ${{ needs.context.outputs.sha }}
+          TARGET: ${{ needs.context.outputs.target }}
+        run: bash .github/scripts/web.sh deploy
+
+  deploy:
+    name: Deploy ${{ matrix.name }} to ${{ needs.context.outputs.target }}
+    needs:
+      - context
+      - deploy-tail
+    if: needs.context.outputs.should-deploy == 'true'
+    runs-on:
+      group: web-deploy
+      labels: wowlab-web-deploy
+    container:
+      image: node:24.20.0-bookworm@sha256:be23f54a88d34e8824c741b19b91064094f92c1c97b194144bfc8b50d67258e2
+      options: >-
+        --cap-drop=ALL
+        --cpus=${{ matrix.cpus }}
+        --memory=${{ matrix.memory }}
+        --memory-swap=${{ matrix.memory }}
+        --pids-limit=8192
+        --security-opt=no-new-privileges
+      volumes:
+        - /var/cache/github-actions/web/deploy/${{ needs.context.outputs.target }}:/cache
+    environment:
+      name: ${{ needs.context.outputs.target == 'prod' && 'production' || 'development' }}
+      url: ${{ needs.context.outputs.target == 'prod' && matrix.prod-url || matrix.dev-url }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Landing
+            app: landing
+            package: "@apps/landing"
+            cpus: 40
+            memory: 48g
+            next-cache: "true"
+            prod-url: https://wowlab.gg
+            dev-url: https://dev.wowlab.gg
+          - name: OG
+            app: og
+            package: "@apps/og"
+            cpus: 8
+            memory: 8g
+            next-cache: "false"
+            prod-url: https://og.wowlab.gg
+            dev-url: https://og.dev.wowlab.gg
+          - name: Studio
+            app: studio
+            package: "@apps/studio"
+            cpus: 40
+            memory: 48g
+            next-cache: "true"
+            prod-url: https://app.wowlab.gg
+            dev-url: https://app.dev.wowlab.gg
+    timeout-minutes: 30
+    steps:
+      - name: Check out ${{ needs.context.outputs.branch }}
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+          ref: ${{ needs.context.outputs.sha }}
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup
+        with:
+          install-filter: "${{ matrix.package }}... @wowlab/scripts"
+          next-cache: ${{ matrix.next-cache }}
+
+      - name: Deploy application
+        env:
+          APP: ${{ matrix.app }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DEPLOY_BRANCH: ${{ needs.context.outputs.branch }}
+          DEPLOY_SHA: ${{ needs.context.outputs.sha }}
+          TARGET: ${{ needs.context.outputs.target }}
+        run: bash .github/scripts/web.sh deploy

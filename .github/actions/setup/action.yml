@@ -1,0 +1,38 @@
+name: Setup web workspace
+description: Install workspace dependencies and optional CI tools
+
+inputs:
+  deno:
+    description: Install Deno
+    default: "false"
+  install-filter:
+    description: pnpm workspace filter
+    default: ""
+  next-cache:
+    description: Mount persistent Next.js caches
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Deno
+      if: inputs.deno == 'true'
+      uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+      with:
+        deno-version: v2.9.6
+
+    - name: Install pnpm
+      shell: bash
+      run: bash .github/scripts/environment.sh install-pnpm
+
+    - name: Configure local caches
+      shell: bash
+      env:
+        NEXT_CACHE: ${{ inputs.next-cache }}
+      run: bash .github/scripts/environment.sh configure-caches
+
+    - name: Install dependencies
+      shell: bash
+      env:
+        INSTALL_FILTER: ${{ inputs.install-filter }}
+      run: bash .github/scripts/environment.sh install-dependencies

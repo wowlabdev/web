@@ -1,0 +1,3 @@
+Return a corrected rotation that resolves every validation error listed in the diagnostics.
+
+Make the smallest change that fixes each error. Preserve the existing actions, their order, and the original intent. Do not add new spells, lists, variables, or conditions beyond what a fix strictly requires, and do not "improve" anything that already validates.

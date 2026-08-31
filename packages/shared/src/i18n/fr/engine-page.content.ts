@@ -1,0 +1,47 @@
+import { insert, plural } from "intlayer";
+
+import { fr } from "../i18n";
+
+// prettier-ignore
+export default fr("enginePage", {
+  // apps/studio/src/components/dev/engine/auras-table.tsx, apps/studio/src/components/dev/engine/engine-content.tsx, apps/studio/src/components/dev/engine/hero-talents-section.tsx +4 more
+  "acrossSpecs": insert("sur {{count}} spécialisations"),
+  "auras": "Auras",
+  "badgeOffGcd": "hors GCD",
+  "badgePet": "familier",
+  "benchmarkReport": "Rapport de benchmark",
+  "cast": "Incantation",
+  "columnAura": "Aura",
+  "columnDuration": "Durée",
+  "columnFlags": "Flags",
+  "columnName": "Nom",
+  "columnPandemic": "Pandémie",
+  "columnPeriodic": "Périodique",
+  "columnSpell": "Sort",
+  "columnStacks": "Charges",
+  "columnTalent": "Talent",
+  "columnTarget": "Cible",
+  "columnType": "Type",
+  "cooldown": "Recharge",
+  "cost": "Coût",
+  "damage": "Dégâts",
+  "implementedSpecs": "Spécialisations implémentées",
+  "intro": "Introspection en direct du moteur de simulation WASM. Tout ce qui suit est lu directement depuis le binaire compilé au runtime.",
+  "no": "Non",
+  "noHeroTalents": "Aucun talent de héros défini.",
+  "openItemsReportAria": insert("Ouvrir le rapport d'objets {{slug}}"),
+  "openManifestAria": insert("Ouvrir le manifeste {{slug}} sur GitHub"),
+  "resourceStats": insert("Max {{max}} · Régén {{regen}}/s · Départ {{start}}"),
+  "spec": "Spé",
+  "specCount": plural({ one: "{{count}} spécialisation", other: "{{count}} spécialisations" }),
+  "spells": "Sorts",
+  "tabAurasCount": insert("Auras ({{count}})"),
+  "tabHeroCount": insert("Talents de héros ({{count}})"),
+  "tabSpellsCount": insert("Sorts ({{count}})"),
+  "tabTalentsCount": insert("Talents ({{count}})"),
+  "talents": "Talents",
+  "title": "Moteur",
+  "typeAura": "aura",
+  "typeSpell": "sort",
+  "yes": "Oui",
+});

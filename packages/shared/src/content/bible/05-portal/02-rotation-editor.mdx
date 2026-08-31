@@ -1,0 +1,50 @@
+---
+title: Rotation Editor
+description: "The visual rotation editor: its zustand document store, the action-list and condition-tree UI, WASM-backed validation, and the live trace preview."
+nextSteps:
+  - 05-portal/03-simulation-ui
+---
+
+The rotation editor lets you build a spell-priority rotation without writing the JSON by hand. You arrange action lists, each a drag-sortable list of actions (cast a spell, call another list, set a variable, wait), and each action carries a condition tree that decides when it fires. The whole document lives in a context-provided pair of Zustand stores; as you edit, the engine validates it and runs a live preview, both over the WebAssembly boundary.
+
+## The document store
+
+The editor's state is split across two Zustand stores, created per-mount by `EditorStoreProvider` and reached through the `useEditorDocument`, `useEditorUi`, and `useEditorHistory` hooks. The **document store** holds the undoable document — the editable `script` (an `EditorScript` with `actions`, named `lists`, and `variables`) and the `metadata` draft. The transient **UI store** holds everything that must not be undoable: dialog state, the current selection, the latest `trace`, the latest `validation`, and the new-rotation setup flow.
+
+Undo/redo is not hand-rolled. The document store is wrapped in the [`zustand-travel`](https://github.com/mutativejs/zustand-travel) middleware in manual-archive mode (`maxHistory` of 50): each discrete edit calls `archive()` to commit one history frame, a metadata draft is committed as its own frame on blur, and `reset()` returns the document to the baseline it was seeded with. `useEditorHistory` exposes `undo`/`redo`/`canUndo`/`canRedo` off the travel controls.
+
+A detail worth naming: every action in the editor carries a client-side `id` from `crypto.randomUUID()` so React keys and drag-and-drop are stable. The engine's `Rotation` type has no such id, so the store exposes `dehydrate()`, which strips the ids back out before the script crosses into WASM:
+
+{/* docref fn rotation-editor-dehydrate-script */}
+
+Hydrate-in, dehydrate-out is the contract between the editor's representation and the engine's.
+
+The page component seeds the stores from the route: it loads the rotation via React Query when editing an existing one, otherwise starts a new draft, and passes the resulting seed to `EditorStoreProvider`. The provider is keyed by rotation id, so switching rotations remounts it with fresh state and an empty history.
+
+## Action lists and the condition tree
+
+The left pane is a list switcher plus the action list for the active list. The action list itself is drag-sortable via `@dnd-kit`: a `DndContext` with a `SortableContext` keyed on the stable action ids, and `arrayMove` on drag-end. The action types you can add map one-to-one onto the engine's `Action` variants, and the option list is typed against `Action["type"]` so a new engine variant cannot be left out:
+
+{/* docref code rotation-editor-action-types */}
+
+Each action's `condition` is a tree of `Condition` nodes, edited node-by-node. The node kinds the editor knows how to render and convert between are the engine's condition variants: `and` / `or` / `not`, `compare`, `arith`, `min_max`, `unary_math`, `if_then_else`, `read` (a field read like `player.haste`), `var`, and the literals `bool` / `int` / `float`. The comparison, arithmetic, and variable operators offered in the UI are the engine's `CompareOp` / `ArithOp` / `VarOp` enums, imported straight from `wowlab-engine`. Keeping these lists derived from the engine's own types is intentional: the editor cannot offer an operator the engine cannot evaluate.
+
+## Validation over the WASM boundary
+
+As you edit, the editor asks the engine whether the rotation is valid for the chosen spec. `useRotationValidation` debounces 250 ms, dehydrates the script to JSON, and calls `engine.validateRotationForSpec(json, specId)`. That export is **spec-aware**: beyond structural parsing it resolves every spell, aura, and talent name against the spec's introspection and reports any that do not exist, so a typo'd spell slug shows up as an error rather than silently failing at sim time:
+
+{/* docref fn rotation-editor-validate-for-spec */}
+
+It looks up the spec descriptor, introspects it, parses the rotation, runs the structural pass, then checks every extracted name against a resolver built from the spec's own spells and auras. The result's `errors` and `warnings` drive the validation strip and per-action badges, and a thrown WASM panic is caught and surfaced as a single error rather than crashing the page.
+
+This contradicts an older note that validation over the boundary is structural-only. The structural-only export (`validateRotation`) still exists, but the editor uses the spec-aware one.
+
+## The live trace preview
+
+The right pane runs a single deterministic iteration and visualizes it: a timeline, DPS and resource graphs, a "why not?" panel explaining which conditions blocked each action. `useLiveTrace` debounces 250 ms and runs the trace in a dedicated web worker. It builds a sim config from a representative paperdoll profile plus the preview controls (fight style, duration, target count, seed), serializes the dehydrated rotation to JSON, and calls `api.runTrace(simConfig, rotationJson, seed, workerEnv)` over Comlink. The worker delegates to the engine's `runIterationTrace`, which forces the preview rotation through the engine and returns an `IterationTrace`:
+
+{/* docref fn rotation-editor-run-iteration-trace */}
+
+It pins the config's `rotation_id` to the preview slot, overlays the editor's rotation JSON onto the JS resolver, attaches a decision-trace sink, and runs one seeded iteration through `simulate_intent_with_trace`.
+
+Two design choices stand out. The trace runs in a worker, not on the main thread, so a slow or panicking iteration never freezes the editor, and an out-of-date result is discarded via a per-run token guard. The production rotation remains portable bytecode; an explicit trace request uses the engine's private structural reference path because the "why not?" data requires recording decisions one at a time. The runtime split itself lives in [the rotation compiler](/dev/bible/engine/rotation-compiler).

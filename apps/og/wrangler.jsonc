@@ -1,0 +1,56 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wowlab-og",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public",
+  },
+  "r2_buckets": [
+    {
+      "binding": "OG_BUCKET",
+      "bucket_name": "wowlab-og-cache",
+    },
+  ],
+  "ratelimits": [
+    {
+      "name": "OG_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 10, "period": 60 },
+    },
+  ],
+  "routes": [{ "pattern": "og.wowlab.gg", "custom_domain": true }],
+  "observability": {
+    "enabled": true,
+  },
+  "tail_consumers": [{ "service": "wowlab-tail" }],
+  "env": {
+    "dev": {
+      "name": "wowlab-og-dev",
+      "assets": {
+        "binding": "ASSETS",
+        "directory": "./public",
+      },
+      "r2_buckets": [
+        {
+          "binding": "OG_BUCKET",
+          "bucket_name": "wowlab-og-dev-cache",
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "OG_RATE_LIMITER",
+          "namespace_id": "1002",
+          "simple": { "limit": 10, "period": 60 },
+        },
+      ],
+      "routes": [{ "pattern": "og.dev.wowlab.gg", "custom_domain": true }],
+      "observability": {
+        "enabled": true,
+      },
+      "tail_consumers": [{ "service": "wowlab-tail-dev" }],
+    },
+  },
+}

@@ -1,0 +1,19 @@
+## Allowed fields (the ONLY legal `read` targets — domain.name)
+<% it.grammar.descriptors.forEach(function (d) { -%>
+- <%= d.domain %>.<%= d.name %> : <%= d.field_type %><% if (d.key_domain) { %> (key: <%= d.key_domain %>)<% } %> — <%= d.description %>
+<% }) -%>
+<% if (it.grammar.descriptors.length === 0) { -%>
+(none)
+<% } -%>
+
+## Allowed spell slugs (the ONLY legal `cast` spells)
+
+<%= it.grammar.spellSlugs.join(", ") || "(none)" %>
+
+## Allowed aura slugs (legal `read` keys for aura domains)
+
+<%= it.grammar.auraSlugs.join(", ") || "(none)" %>
+
+## Allowed resource names
+
+<%= it.grammar.resourceNames.join(", ") || "(none)" %>

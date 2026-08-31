@@ -1,0 +1,37 @@
+import { fr } from "../i18n";
+
+// prettier-ignore
+export default fr("metricsPage", {
+  // apps/studio/src/components/int/metrics/chart-metrics-area.tsx, apps/studio/src/components/int/metrics/error-state.tsx, apps/studio/src/components/int/metrics/metrics-page.tsx +2 more
+  "active": "actifs",
+  "channels": "Canaux",
+  "chunks": "chunks",
+  "chunksAssigned": "Chunks assignés",
+  "chunksReclaimed": "Chunks récupérés",
+  "clients": "Clients",
+  "connected": "connectés",
+  "connecting": "Connexion",
+  "envHint": "Définis GRAFANA_PROMETHEUS_URL et GRAFANA_PROMETHEUS_TOKEN pour activer les graphiques.",
+  "errorBadge": "Erreur",
+  "hours": "heures",
+  "inflight": "en cours",
+  "live": "Live",
+  "loading": "Chargement...",
+  "messagesReceived": "Messages reçus",
+  "messagesSent": "Messages envoyés",
+  "nodesOffline": "Nœuds hors ligne",
+  "nodesOnline": "Nœuds en ligne",
+  "notAvailable": "données historiques indisponibles.",
+  "notEnoughData": "Pas assez de points de données",
+  "pending": "En attente",
+  "running": "En cours",
+  "staleCleanups": "Nettoyages obsolètes",
+  "subscriptions": "Abonnements",
+  "tabBeacon": "Beacon",
+  "tabSentinel": "Sentinel",
+  "total": "total",
+  "unique": "uniques",
+  "updating": "Mise à jour",
+  "uptime": "Uptime",
+  "users": "Utilisateurs",
+});

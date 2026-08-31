@@ -1,0 +1,141 @@
+{
+  "spell_id": 108359,
+  "spec_id": 62,
+  "input": {
+    "self_spell": {
+      "id": 108359,
+      "description": "Restores $o1% of maximum health over $d to you and your pet, and increases all other healing received by $s2% for the duration.",
+      "description_variables": "",
+      "cast_time": 0,
+      "recovery_time": 120000,
+      "duration": 10000,
+      "max_charges": 0,
+      "max_stacks": 1,
+      "range_max_0": 0.0,
+      "proc_rppm": 0.0,
+      "internal_cooldown": 120000,
+      "file_name": "spell_warlock_darkregeneration",
+      "name": "Dark Regeneration",
+      "effects": [
+        {
+          "index": 0,
+          "effect": 6,
+          "aura": 20,
+          "base_points": 2.0,
+          "period": 1000,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 0,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        },
+        {
+          "index": 1,
+          "effect": 6,
+          "aura": 118,
+          "base_points": 25.0,
+          "period": 0,
+          "chain_targets": 0,
+          "trigger_spell": 0,
+          "misc_value_0": 127,
+          "misc_value_1": 0,
+          "radius_min": 0.0,
+          "radius_max": 0.0,
+          "coefficient": 0.0,
+          "points_per_resource": 0.0,
+          "variance": 0.0,
+          "bonus_coefficient": 0.0,
+          "bonus_coefficient_from_ap": 0.0,
+          "amplitude": 0.0,
+          "pvp_multiplier": 1.0
+        }
+      ]
+    },
+    "cross_spells": [],
+    "paperdoll": {
+      "spec_id": 62,
+      "spec_order_index": 0,
+      "class_id": 8,
+      "level": 90,
+      "is_male": true,
+      "max_health": 35560.0,
+      "role_mult": 1.0,
+      "stats": {
+        "attack_power": 1573.0,
+        "spell_power": 1573.0,
+        "primary_stat": 1573.0,
+        "intellect": 1573.0,
+        "crit": 8.661111111111111,
+        "haste": 2.5388888888888888,
+        "mastery": 5.170000205429167,
+        "versatility": 1.7666666666666666
+      },
+      "weapon": {
+        "main_min": 0.0,
+        "main_max": 0.0,
+        "main_speed": 3.6,
+        "off_min": 0.0,
+        "off_max": 0.0,
+        "off_speed": 0.0
+      },
+      "known_spell_ids": [
+        475, 1449, 1459, 5143, 12051, 30449, 30451, 31661, 44425, 45438, 55342,
+        110959, 153626, 205022, 205025, 205028, 210476, 212653, 231564, 235450,
+        236628, 281482, 321387, 321420, 321507, 321526, 321745, 342245, 342249,
+        343183, 365350, 382268, 382297, 382424, 382490, 382493, 383092, 383676,
+        384060, 384452, 384612, 384651, 384858, 386828, 390218, 414379, 414659,
+        443739, 443783, 444256, 444483, 444719, 444752, 444827, 444968, 444986,
+        448601, 452198, 452997, 458437, 461260, 461261, 470021, 1223798,
+        1241462, 1243435, 1243507, 1243557, 1244001, 1244031, 1244087, 1244105,
+        1244107, 1257942, 1261080, 1261082, 1261106, 1265517, 1270845, 1270865,
+        1270872, 1280165
+      ],
+      "active_aura_ids": [
+        1459, 12051, 36032, 205025, 210824, 236628, 263725, 365362, 383783,
+        432021, 449322, 453250, 461524, 1223797, 1242974, 1277009
+      ]
+    }
+  },
+  "expected_fragments": [
+    {
+      "kind": "text",
+      "value": "Restores "
+    },
+    {
+      "kind": "value",
+      "value": "20",
+      "raw": 20.0
+    },
+    {
+      "kind": "text",
+      "value": "% of maximum health over "
+    },
+    {
+      "kind": "duration",
+      "value": "10 sec",
+      "raw_ms": 10000.0
+    },
+    {
+      "kind": "text",
+      "value": " to you and your pet, and increases all other healing received by "
+    },
+    {
+      "kind": "value",
+      "value": "25",
+      "raw": 25.0
+    },
+    {
+      "kind": "text",
+      "value": "% for the duration."
+    }
+  ],
+  "expected_text": "Restores 20% of maximum health over 10 sec to you and your pet, and increases all other healing received by 25% for the duration."
+}

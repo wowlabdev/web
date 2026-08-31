@@ -1,0 +1,54 @@
+---
+title: Items and Scaling
+description: "ItemDataFlat, the seven-table ItemScalingData bundle, and resolve_item: how a base item plus its bonus IDs becomes an effective item at a given level"
+nextSteps:
+  - 02-game-data/04-spell-descriptions
+---
+
+An item in WoW is rarely the item you actually equip. The base row gives you a template, a name, an inventory type, a set of stat slots, but the real values depend on the item level, and the item level depends on a list of _bonus IDs_ applied on top of the base. Resolving an item means taking the template, applying the bonuses, and scaling everything through a set of curves to arrive at one effective state. The data layer carries the template and the scaling tables; one function does the resolution.
+
+## The template: `ItemDataFlat`
+
+`ItemDataFlat` is the base item record. It holds identity (`id`, `name`, `file_name`), classification (`item_level`, `quality`, `class_id`, `subclass_id`, `inventory_type`), and the variable parts: `stats: Vec<ItemStat>`, `effects: Vec<ItemEffect>`, `sockets`, set membership, and drop sources. The two sub-types that matter most downstream are `ItemStat { stat_type, value }`, a single stat slot where `value` is an allocation budget rather than a final number, and `ItemEffect { spell_id, trigger_type, charges, cooldown, category_cooldown }`, which is how a trinket or weapon proc points at the spell it casts.
+
+The custom `Default` is worth noting because it encodes WoW conventions rather than zeroes: a missing item gets `file_name = "inv_misc_questionmark"`, `stackable = 1`, and `allowable_class = allowable_race = -1`, meaning "no restriction". So a default-constructed item behaves like a generic unrestricted item, not like an empty one.
+
+## The scaling tables: `ItemScalingData`
+
+The numbers that turn a budget into a stat live in seven separate DBC tables, and `ItemScalingData` is the bundle that holds all of them as pre-grouped maps, each field an `IntMap` keyed for fast lookup:
+
+{/* docref struct items-scaling-data-struct */}
+
+`bonuses` is item bonuses grouped by `parent_item_bonus_list_id`. `curves` and `curve_points` are the scaling curves and their sampled points, points sorted by `order_index`. `rand_prop_points` is the per-item-level stat budgets. The last three, `item_scaling_configs`, `item_offset_curves`, and `item_squish_eras`, are the configuration that maps an item onto a curve and handles stat squishes.
+
+What makes this bundle the convergence point of the whole data layer is its constructor. `ItemScalingData::from_flat` takes the seven raw `Vec<…Flat>` lists and does the grouping and sorting in one place:
+
+{/* docref fn items-scaling-from-flat */}
+
+Both backends call exactly this function with exactly these seven arguments. The CSV path builds the seven vectors from `DbcData` via `transform_all_item_bonuses`, `transform_all_curves`, and friends; the Supabase path fetches the same seven tables over the network and feeds the rows into the identical call. One grouping function, two completely different sources, and that is the design that keeps the backends honest.
+
+<BibleTable id="gamedata-scaling-tables">
+
+| Field                  | Source table                | Keyed by                           |
+| ---------------------- | --------------------------- | ---------------------------------- |
+| `bonuses`              | `game.item_bonuses`         | `parent_item_bonus_list_id`        |
+| `curves`               | `game.curves`               | curve id                           |
+| `curve_points`         | `game.curve_points`         | curve id (sorted by `order_index`) |
+| `rand_prop_points`     | `game.rand_prop_points`     | item level                         |
+| `item_scaling_configs` | `game.item_scaling_configs` | config id                          |
+| `item_offset_curves`   | `game.item_offset_curves`   | id                                 |
+| `item_squish_eras`     | `game.item_squish_eras`     | id                                 |
+
+</BibleTable>
+
+## Resolution: `resolve_item`
+
+`resolve_item` is the single function that turns a template plus bonuses into an effective item:
+
+{/* docref fn items-scaling-resolve-item */}
+
+It is the resolution shared by the sim and the tooltip. The same code path produces the numbers the engine simulates and the numbers a tooltip displays, so the two can never drift.
+
+The flow is: collect the applicable bonuses for the given `bonus_ids`, resolve the effective item level from those bonuses, then walk every bonus through an exhaustive match over the bonus-type variants, quality overrides, socket additions, stat changes, and so on, mutating a working `ParsedItem` and recording an `AppliedBonus` diagnostic for each. The output is a `ResolvedItem`: the single effective state of the item after its bonuses are applied. The one thing `resolve_item` deliberately does **not** compute is weapon damage. The `weapon` field is left for the sim, because weapon damage depends on the damage-scaling table and weapon speed, which the combat layer owns.
+
+`resolve_item` is also exported across the WASM boundary so the browser can resolve and display items without a round-trip. It lives in `wowlab-common`, which the engine bundle re-exports. The resolver trait's `get_item` only ever returns the base `ItemDataFlat`; turning that into a `ResolvedItem` is a separate, pure step layered on top, which is why it can run identically on a node, in the CLI, and in a browser tab.

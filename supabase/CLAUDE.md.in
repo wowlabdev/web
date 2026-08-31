@@ -1,0 +1,14 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Functions
+
+- `ai` handles the Studio AI endpoints.
+- `icons` proxies and caches game icons.
+
+Each function owns its Deno dependency map and lockfile. Keep shared HTTP helpers in `functions/_shared`; app code shared with the browser belongs in `packages/shared`.
+
+Deploy functions separately with `pnpm deploy:ai` or `pnpm deploy:icons` from this directory. Both require `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF`.
+
+Set `AI_MCP_ALLOWED_HOSTS` to the comma-separated hostnames the AI function may use as custom MCP servers.
+{% endblock %}

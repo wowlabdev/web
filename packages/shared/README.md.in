@@ -1,0 +1,5 @@
+{% extends "readme-node.md.j2" %}
+{% set subtitle = "shared source" %}
+{% block description %}
+Shared UI, library code, content, and translations for the WoW Lab apps.
+{% endblock %}

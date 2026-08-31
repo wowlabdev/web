@@ -1,0 +1,10 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Notes
+
+- Cloudflare Worker that renders Open Graph images with [`@cf-wasm/og`](https://github.com/fineshopdesign/cf-wasm).
+- Entry point is `src/index.ts`. Image rendering lives in `src/image.tsx`; Worker config lives in `wrangler.jsonc`.
+- Rendered images are cached in an R2 bucket (`OG_BUCKET`) and at the edge. The cache key is order-independent on query params, so the same params in any order resolve to one object.
+- `pnpm dev` runs `wrangler dev`; `pnpm cf:deploy` deploys the worker.
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "instructions-node.md.j2" %}
+{% block content %}
+
+## Notes
+
+- Marketing site. Public, unauthenticated pages only. The authenticated app lives in [`apps/studio`](../studio/).
+- Shared UI, lib, and i18n come from [`@wowlab/shared`](../../packages/shared/). Import from there, never duplicate.
+- Blog and content pages are built from markdown with [velite](https://velite.js.org/) (`velite.config.ts`).
+- Copy is wired through intlayer (`intlayer.config.ts`). Load the `intlayer` skill before touching strings.
+- Deployed to Cloudflare via OpenNext (`open-next.config.ts`, `wrangler.jsonc`).
+{% endblock %}

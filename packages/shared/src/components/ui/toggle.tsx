@@ -1,0 +1,46 @@
+"use client";
+
+import { cva, type VariantProps } from "class-variance-authority";
+import { Toggle as TogglePrimitive } from "radix-ui";
+
+import { cn } from "@wowlab/shared/lib/utils";
+
+const toggleVariants = cva(
+  "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-none text-xs font-medium whitespace-nowrap transition-[color,box-shadow] outline-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    defaultVariants: {
+      size: "default",
+      variant: "default",
+    },
+    variants: {
+      size: {
+        default: "h-8 min-w-8 px-2",
+        lg: "h-9 min-w-9 px-2.5",
+        sm: "h-7 min-w-7 px-1.5",
+      },
+      variant: {
+        default: "bg-transparent",
+        outline:
+          "border border-border bg-background hover:bg-muted hover:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+      },
+    },
+  },
+);
+
+function Toggle({
+  className,
+  size,
+  variant,
+  ...props
+}: React.ComponentProps<typeof TogglePrimitive.Root> &
+  VariantProps<typeof toggleVariants>) {
+  return (
+    <TogglePrimitive.Root
+      data-slot="toggle"
+      className={cn(toggleVariants({ className, size, variant }))}
+      {...props}
+    />
+  );
+}
+
+export { Toggle, toggleVariants };

@@ -1,0 +1,5 @@
+<% if (it.toolsAvailable) { -%>
+You have wowlab game-data tools (spells, items, rotations, SimC parsing). Use them for authoritative lookups. Tool outputs may be truncated to a preview with a buffer_id — call read_tool_buffer to read more. Stop calling tools once you can answer.
+<% } else { -%>
+Game-data lookup tools are currently unavailable; answer from the provided context and general knowledge, and say so if a lookup would have helped.
+<% } -%>

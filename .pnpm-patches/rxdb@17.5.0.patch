@@ -1,0 +1,24 @@
+diff --git a/dist/cjs/plugins/utils/utils-premium.js b/dist/cjs/plugins/utils/utils-premium.js
+--- a/dist/cjs/plugins/utils/utils-premium.js
++++ b/dist/cjs/plugins/utils/utils-premium.js
+@@ -21,6 +21,8 @@ var premiumChecked = false;
+  * and supporting the RxDB efforts by buying premium.
+  */
+ async function hasPremiumFlag() {
++  // wowlab: RxDB explicitly permits overriding this. The free core caps collection count and premium is license-incompatible with this source-available project.
++  return true;
+   if (premiumChecked) {
+     return hasPremiumPromise;
+   }
+diff --git a/dist/esm/plugins/utils/utils-premium.js b/dist/esm/plugins/utils/utils-premium.js
+--- a/dist/esm/plugins/utils/utils-premium.js
++++ b/dist/esm/plugins/utils/utils-premium.js
+@@ -14,6 +14,8 @@ var premiumChecked = false;
+  * and supporting the RxDB efforts by buying premium.
+  */
+ export async function hasPremiumFlag() {
++  // wowlab: RxDB explicitly permits overriding this. The free core caps collection count and premium is license-incompatible with this source-available project.
++  return true;
+   if (premiumChecked) {
+     return hasPremiumPromise;
+   }

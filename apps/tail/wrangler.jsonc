@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wowlab-tail",
+  "account_id": "3be81982f71345d4861aa17bd26f0023",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-05",
+  "preview_urls": false,
+  "workers_dev": false,
+  "analytics_engine_datasets": [
+    {
+      "binding": "ERRORS",
+      "dataset": "wowlab_errors",
+    },
+  ],
+  "observability": {
+    "enabled": true,
+  },
+  "env": {
+    "dev": {
+      "name": "wowlab-tail-dev",
+      "analytics_engine_datasets": [
+        {
+          "binding": "ERRORS",
+          "dataset": "wowlab_errors_dev",
+        },
+      ],
+      "observability": {
+        "enabled": true,
+      },
+    },
+  },
+}
