@@ -16,3 +16,6 @@ pnpm-lock.yaml
 apps/studio/public/benchmarks
 apps/studio/public/wasm
 vendor
+
+# Verbatim legal text
+LICENSE.md
