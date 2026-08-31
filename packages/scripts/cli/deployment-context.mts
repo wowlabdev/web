@@ -1,6 +1,7 @@
 import { fs } from "zx";
 
 import {
+  didBuildApplications,
   listWorkflowRuns,
   resolveDeploymentTarget,
   shouldDeployDevelopmentRun,
@@ -35,16 +36,17 @@ const target = resolveDeploymentTarget({
 
 let shouldDeploy = true;
 
-if (event === "workflow_run" && target === "dev") {
-  const runs = await listWorkflowRuns({
-    repository,
-    token: required("GITHUB_TOKEN"),
-  });
+if (event === "workflow_run") {
+  const runId = Number.parseInt(required("DEPLOY_RUN_ID"), 10);
+  const token = required("GITHUB_TOKEN");
 
-  shouldDeploy = shouldDeployDevelopmentRun(
-    Number.parseInt(required("DEPLOY_RUN_ID"), 10),
-    runs,
-  );
+  shouldDeploy = await didBuildApplications({ repository, runId, token });
+
+  if (shouldDeploy && target === "dev") {
+    const runs = await listWorkflowRuns({ repository, token });
+
+    shouldDeploy = shouldDeployDevelopmentRun(runId, runs);
+  }
 }
 
 await fs.appendFile(
@@ -61,5 +63,5 @@ await fs.appendFile(
 console.log(
   shouldDeploy
     ? `Deploying ${sha} from ${branch} to ${target}`
-    : `Skipping stale development run for ${branch}`,
+    : `Skipping deployment for ${sha} from ${branch}`,
 );

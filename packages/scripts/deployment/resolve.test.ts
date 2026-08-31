@@ -1,11 +1,20 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  didBuildApplications,
   listWorkflowRuns,
   resolveDeploymentTarget,
   shouldDeployDevelopmentRun,
   type WorkflowRun,
 } from "./resolve.ts";
+
+const jobsResponse = (conclusion: string | null, name = "Run / Build") =>
+  Response.json({ jobs: [{ conclusion, name }] });
+
+const github = { repository: "wowlabdev/web", token: "token" };
+const workflowRun = { ...github, runId: 42 };
+const githubReturning = (response: Response) =>
+  vi.fn<typeof fetch>().mockResolvedValue(response);
 
 const run = (overrides: Partial<WorkflowRun> = {}): WorkflowRun => ({
   conclusion: "success",
@@ -81,27 +90,58 @@ describe("shouldDeployDevelopmentRun", () => {
 describe("listWorkflowRuns", () => {
   it("returns workflow runs from GitHub", async () => {
     const runs = [run()];
-    const request = vi
-      .fn<typeof fetch>()
-      .mockResolvedValue(Response.json({ workflow_runs: runs }));
 
     await expect(
       listWorkflowRuns(
-        { repository: "wowlabdev/web", token: "token" },
-        request,
+        github,
+        githubReturning(Response.json({ workflow_runs: runs })),
       ),
     ).resolves.toEqual(runs);
   });
 
   it("fails when GitHub rejects the request", async () => {
-    const request = vi
-      .fn<typeof fetch>()
-      .mockResolvedValue(new Response(undefined, { status: 503 }));
-
     await expect(
       listWorkflowRuns(
-        { repository: "wowlabdev/web", token: "token" },
-        request,
+        github,
+        githubReturning(new Response(undefined, { status: 503 })),
+      ),
+    ).rejects.toThrow("GitHub returned 503");
+  });
+});
+
+describe("didBuildApplications", () => {
+  it("deploys when CI built the applications", async () => {
+    await expect(
+      didBuildApplications(
+        workflowRun,
+        githubReturning(jobsResponse("success")),
+      ),
+    ).resolves.toBe(true);
+  });
+
+  it("skips when CI skipped the application build", async () => {
+    await expect(
+      didBuildApplications(
+        workflowRun,
+        githubReturning(jobsResponse("skipped")),
+      ),
+    ).resolves.toBe(false);
+  });
+
+  it("fails when the CI run has no application build job", async () => {
+    await expect(
+      didBuildApplications(
+        workflowRun,
+        githubReturning(jobsResponse("success", "Run / Validate")),
+      ),
+    ).rejects.toThrow("CI run 42 has no application build job");
+  });
+
+  it("fails when GitHub rejects the request", async () => {
+    await expect(
+      didBuildApplications(
+        workflowRun,
+        githubReturning(new Response(undefined, { status: 503 })),
       ),
     ).rejects.toThrow("GitHub returned 503");
   });
