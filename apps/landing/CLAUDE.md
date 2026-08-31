@@ -60,6 +60,8 @@ WoW Lab marketing/landing site (Next.js)
 
 ```text
 public/
+  .well-known/
+    security.txt
   addon/
     preview-1.png
     preview-2.png

@@ -25,7 +25,8 @@ See `CLAUDE.md` for the repository rules and commands.
 
 ## GitHub workflows
 
-| Workflow | File                           | Triggers                        |
-| -------- | ------------------------------ | ------------------------------- |
-| CI       | `.github/workflows/ci.yml`     | push, workflow_dispatch         |
-| Deploy   | `.github/workflows/deploy.yml` | workflow_dispatch, workflow_run |
+| Workflow  | File                           | Triggers                        |
+| --------- | ------------------------------ | ------------------------------- |
+| CI        | `.github/workflows/ci.yml`     | push, workflow_dispatch         |
+| CI runner | `.github/workflows/ci-run.yml` | workflow_call                   |
+| Deploy    | `.github/workflows/deploy.yml` | workflow_dispatch, workflow_run |
