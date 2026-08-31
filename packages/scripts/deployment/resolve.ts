@@ -8,9 +8,13 @@ export interface WorkflowRun {
   id: number;
 }
 
-interface ListWorkflowRunsOptions {
+interface GitHubWorkflowOptions {
   repository: string;
   token: string;
+}
+
+interface GitHubWorkflowRunOptions extends GitHubWorkflowOptions {
+  runId: number;
 }
 
 interface ResolveDeploymentTargetOptions {
@@ -19,12 +23,52 @@ interface ResolveDeploymentTargetOptions {
   manualTarget?: string;
 }
 
+interface WorkflowJob {
+  conclusion: string | null;
+  name: string;
+}
+
+interface WorkflowJobs {
+  jobs: WorkflowJob[];
+}
+
 interface WorkflowRuns {
   workflow_runs: WorkflowRun[];
 }
 
+const APPLICATION_BUILD_JOB = "Run / Build";
+
+export async function didBuildApplications(
+  { repository, runId, token }: GitHubWorkflowRunOptions,
+  request: typeof fetch = fetch,
+): Promise<boolean> {
+  const response = await request(
+    `https://api.github.com/repos/${repository}/actions/runs/${runId.toString()}/jobs?filter=latest&per_page=100`,
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${token}`,
+        "X-GitHub-Api-Version": "2026-03-10",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`GitHub returned ${response.status} while listing CI jobs`);
+  }
+
+  const { jobs } = (await response.json()) as WorkflowJobs;
+  const build = jobs.find(({ name }) => name === APPLICATION_BUILD_JOB);
+
+  if (!build) {
+    throw new Error(`CI run ${runId.toString()} has no application build job`);
+  }
+
+  return build.conclusion === "success";
+}
+
 export async function listWorkflowRuns(
-  { repository, token }: ListWorkflowRunsOptions,
+  { repository, token }: GitHubWorkflowOptions,
   request: typeof fetch = fetch,
 ): Promise<WorkflowRun[]> {
   const response = await request(
