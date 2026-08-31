@@ -15,6 +15,8 @@ env:
 jobs:
   scripts:
     name: CI scripts
+    outputs:
+      code: ${{ steps.changes.outputs.code }}
     runs-on:
       group: web-ci
       labels: wowlab-web-ci
@@ -35,6 +37,13 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
+
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: .github/ci-paths.yml
+          predicate-quantifier: some-with-excludes
 
       - name: Verify CI scripts
         run: >-
@@ -67,9 +76,11 @@ jobs:
           deno: "true"
 
       - name: Check peer dependencies
+        if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
         run: pnpm peers check
 
       - name: Audit dependencies
+        if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
         run: pnpm audit --audit-level high
 
       - name: Check documentation
@@ -79,11 +90,13 @@ jobs:
         run: pnpm format:check
 
       - name: Run tests
+        if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
         run: pnpm test
 
   lint:
     name: Lint
     needs: scripts
+    if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
     runs-on:
       group: web-ci
       labels: wowlab-web-ci
@@ -106,6 +119,7 @@ jobs:
   types:
     name: Types
     needs: scripts
+    if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
     runs-on:
       group: web-ci
       labels: wowlab-web-ci
@@ -131,6 +145,7 @@ jobs:
   build:
     name: Build
     needs: scripts
+    if: github.event_name == 'workflow_dispatch' || needs.scripts.outputs.code == 'true'
     runs-on:
       group: web-ci
       labels: wowlab-web-ci
