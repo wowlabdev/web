@@ -916,6 +916,7 @@ src/
         share-dropdown.tsx
         sidebar-layout.tsx
         stat-grid.tsx
+        studio-legal-links.tsx
         system-activity-row.tsx
         system-status-details.tsx
         system-status-indicator.tsx

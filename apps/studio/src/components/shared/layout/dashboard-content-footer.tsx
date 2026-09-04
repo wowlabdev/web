@@ -7,12 +7,15 @@ import { env } from "@wowlab/shared/lib/env";
 import { GitHubIcon } from "@wowlab/shared/lib/icons";
 import { makeTranslationsUrl } from "@wowlab/shared/lib/links";
 
+import { StudioLegalLinks } from "./studio-legal-links";
+
 export function DashboardContentFooter() {
   const content = useIntlayer("dashboardLayout");
   const deploymentSha = env.DEPLOYMENT_SHA?.slice(0, 7);
 
   return (
-    <footer className="fl-px-4/6 flex min-w-0 items-center justify-end gap-3 py-3">
+    <footer className="fl-px-4/6 flex min-w-0 flex-wrap items-center justify-end gap-3 py-3">
+      <StudioLegalLinks />
       <a
         className="text-muted-foreground hover:text-foreground flex min-w-0 items-center gap-1.5 text-xs transition-colors"
         href={makeTranslationsUrl()}
