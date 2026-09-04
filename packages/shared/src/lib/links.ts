@@ -184,7 +184,7 @@ export function makePricingUrl(): string {
 }
 
 export function makeRefundPolicyUrl(): string {
-  return `${landingUrl(href(routes.about.terms))}#payments`;
+  return `${landingUrl(href(routes.about.terms))}#refund-policy`;
 }
 
 export function makeSignInUrl(opts?: { next?: string }): string {

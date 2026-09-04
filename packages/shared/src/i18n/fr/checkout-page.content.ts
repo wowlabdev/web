@@ -25,7 +25,7 @@ export default fr("checkoutPage", {
   "quantity": "Quantité",
   "quantityInline": insert("Quantité : {{count}}"),
   "refundPolicyLink": "politique de remboursement",
-  "refundPolicyPrefix": "En validant ta commande, tu renonces au droit de rétractation. Les abonnements et les packs de boosts ne sont pas remboursables. Voir notre ",
+  "refundPolicyPrefix": "Les abonnements payants et les packs de boosts bénéficient d'une garantie de remboursement de 30 jours calendaires. Voir notre ",
   "refundPolicySuffix": ".",
   "tax": "Taxe",
   "total": "Total",

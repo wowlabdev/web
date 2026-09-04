@@ -96,34 +96,25 @@ function LandingChrome({ children }: Readonly<{ children: ReactNode }>) {
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <HoverCard openDelay={100} closeDelay={150}>
-              <HoverCardTrigger className="hover:text-foreground">
-                {content.footerLegal}
-              </HoverCardTrigger>
-              <HoverCardContent align="end" side="top" className="w-fit">
-                <div className="flex flex-col gap-1.5">
-                  <CookieSettingsTrigger className="hover:text-foreground text-left" />
-                  <Link
-                    href={href(routes.about.imprint)}
-                    className="hover:text-foreground"
-                  >
-                    {content.footerImprint}
-                  </Link>
-                  <Link
-                    href={href(routes.about.privacy)}
-                    className="hover:text-foreground"
-                  >
-                    {content.footerPrivacy}
-                  </Link>
-                  <Link
-                    href={href(routes.about.terms)}
-                    className="hover:text-foreground"
-                  >
-                    {content.footerTerms}
-                  </Link>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            <Link
+              href={href(routes.about.terms)}
+              className="hover:text-foreground"
+            >
+              {content.footerTerms}
+            </Link>
+            <Link
+              href={href(routes.about.privacy)}
+              className="hover:text-foreground"
+            >
+              {content.footerPrivacy}
+            </Link>
+            <Link
+              href={href(routes.about.imprint)}
+              className="hover:text-foreground"
+            >
+              {content.footerImprint}
+            </Link>
+            <CookieSettingsTrigger className="hover:text-foreground text-left" />
             <LanguageDropdown />
           </nav>
         </div>

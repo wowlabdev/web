@@ -6,7 +6,6 @@ export default fr("landingLayout", {
   "footerConnect": "Contact",
   "footerContact": "Contact",
   "footerImprint": "Mentions légales",
-  "footerLegal": "Légal",
   "footerPrivacy": "Confidentialité",
   "footerTerms": "Conditions",
   "navBlog": "Blog",
