@@ -1,6 +1,6 @@
 import { useIntlayer } from "next-intlayer/server";
 
-import { landingUrl } from "@wowlab/shared/lib/routing";
+import { makePrivacyPolicyUrl, makeTermsUrl } from "@wowlab/shared/lib/links";
 
 export function SignInAgreement() {
   const content = useIntlayer("signIn");
@@ -10,7 +10,7 @@ export function SignInAgreement() {
       {content.agreement({
         privacy: (
           <a
-            href={landingUrl("/privacy")}
+            href={makePrivacyPolicyUrl()}
             target="_blank"
             rel="noreferrer"
             className="text-foreground hover:underline"
@@ -20,7 +20,7 @@ export function SignInAgreement() {
         ),
         terms: (
           <a
-            href={landingUrl("/terms")}
+            href={makeTermsUrl()}
             target="_blank"
             rel="noreferrer"
             className="text-foreground hover:underline"

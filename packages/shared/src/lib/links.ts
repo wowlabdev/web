@@ -183,8 +183,12 @@ export function makePricingUrl(): string {
   return landingUrl(href(routes.pricing));
 }
 
+export function makePrivacyPolicyUrl(): string {
+  return landingUrl(href(routes.about.privacy));
+}
+
 export function makeRefundPolicyUrl(): string {
-  return `${landingUrl(href(routes.about.terms))}#payments`;
+  return `${makeTermsUrl()}#refund-policy`;
 }
 
 export function makeSignInUrl(opts?: { next?: string }): string {
@@ -196,6 +200,10 @@ export function makeSignInUrl(opts?: { next?: string }): string {
 
 export function makeSimulateUrl(): string {
   return appUrl(href(routes.simulate.index));
+}
+
+export function makeTermsUrl(): string {
+  return landingUrl(href(routes.about.terms));
 }
 
 export function makeTranslationsUrl(): string {

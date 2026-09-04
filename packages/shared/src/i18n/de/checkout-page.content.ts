@@ -25,7 +25,7 @@ export default de("checkoutPage", {
   "quantity": "Menge",
   "quantityInline": insert("Menge: {{count}}"),
   "refundPolicyLink": "Rückerstattungsrichtlinie",
-  "refundPolicyPrefix": "Mit der Bestellung verzichtest du auf das Widerrufsrecht. Abonnements und Boost-Pakete sind nicht erstattungsfähig. Siehe unsere ",
+  "refundPolicyPrefix": "Für kostenpflichtige Abonnements und Boost-Pakete gilt eine 30-tägige Geld-zurück-Garantie. Siehe unsere ",
   "refundPolicySuffix": ".",
   "tax": "Steuer",
   "total": "Gesamt",

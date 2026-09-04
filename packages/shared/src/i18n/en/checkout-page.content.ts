@@ -25,7 +25,7 @@ export default en("checkoutPage", {
   "quantity": "Quantity",
   "quantityInline": insert("Quantity: {{count}}"),
   "refundPolicyLink": "refund policy",
-  "refundPolicyPrefix": "By checking out you waive the right of withdrawal. Subscriptions and boost packs are non-refundable. See our ",
+  "refundPolicyPrefix": "Paid subscriptions and boost packs include a 30-calendar-day money-back guarantee. See our ",
   "refundPolicySuffix": ".",
   "tax": "Tax",
   "total": "Total",
